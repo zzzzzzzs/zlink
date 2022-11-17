@@ -1,10 +1,10 @@
-package work.sajor.zlink;
+package work.sajor.zlink.admin;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class ZlinkApplicationTests {
+class ZlinkAdminApplicationTests {
 
     @Test
     void contextLoads() {
