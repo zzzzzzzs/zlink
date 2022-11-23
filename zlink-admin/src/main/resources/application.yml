@@ -12,7 +12,7 @@ spring:
   datasource:
     username: root
     password: 123456
-    url: jdbc:mysql://localhost:3306/small_oms
+    url: jdbc:mysql://localhost:3306/crap
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis-plus:
@@ -43,6 +43,12 @@ logging:
   file:
     path: /tmp/crap/log
 
+# -------------------------- crap -----------------------------
 crap:
-  log:
-    path: /tmp/crap/log
+  id: ${hostname:localhost}                       # 节点标识
+
+  # * 挂载目录
+  path:
+    tmp: /tmp/crap/tmp                           # 临时目录
+    log: /tmp/crap/log                           # 日志目录
+    source: /tmp/crap/source                     # 源码目录, public 为 web 根目录, public/upload 为上传目录

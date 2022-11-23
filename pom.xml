@@ -12,7 +12,7 @@
 
     <groupId>work.sajor</groupId>
     <artifactId>zlink</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>0.0.1</version>
     <name>zlink</name>
     <description>zlink</description>
     <packaging>pom</packaging>
@@ -25,13 +25,18 @@
         <crap.version>0.0.1</crap.version>
 
         <!-- project -->
+        <zlink.verzion>0.0.1</zlink.verzion>
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
+
 
     </properties>
 
     <modules>
         <module>crap</module>
         <module>zlink-admin</module>
+        <module>zlink-generator</module>
+        <module>zlink-common</module>
+        <module>zlink-modules</module>
     </modules>
 
     <dependencies>

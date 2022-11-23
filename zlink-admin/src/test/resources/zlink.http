@@ -1,9 +1,9 @@
-POST {{host}}/a/list
+POST {{host}}/datasource/list
 Authorization: {{auth}}
 Content-Type: application/json;charset=UTF-8
 User-Agent: {{agent}}
 
-{"pageNo":1,"pageSize":2,"prefix":"","sort":[{"key":"code","order":"DESC"}],"where":[]}
+{"pageNo":1,"pageSize":20,"prefix":"","sort":[{"key":"code","order":"DESC"}],"where":[]}
 
 
 ###

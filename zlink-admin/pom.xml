@@ -6,12 +6,12 @@
     <parent>
         <artifactId>zlink</artifactId>
         <groupId>work.sajor</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.1</version>
     </parent>
 
     <groupId>work.sajor</groupId>
     <artifactId>zlink-admin</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${zlink.verzion}</version>
     <name>zlink-admin</name>
     <description>zlink-admin</description>
     <properties>
@@ -23,7 +23,19 @@
         <dependency>
             <groupId>work.sajor</groupId>
             <artifactId>crap-server</artifactId>
-            <version>0.0.1</version>
+            <version>${crap.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>work.sajor</groupId>
+            <artifactId>zlink-modules</artifactId>
+            <version>${zlink.verzion}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>work.sajor</groupId>
+            <artifactId>zlink-manager</artifactId>
+            <version>${zlink.verzion}</version>
         </dependency>
 
         <dependency>
