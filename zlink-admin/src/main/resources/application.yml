@@ -7,12 +7,16 @@ server:
       mime-types: application/javascript,application/json,application/xml,text/html,text/xml,text/plain,text/css,image/*
 
 spring:
+##  -- swagger --
+#  mvc:
+#    pathmatch:
+#      matching-strategy: ant_path_matcher
   application:
     name: ZLink
   datasource:
-    username: root
-    password: 123456
-    url: jdbc:mysql://localhost:3306/crap
+    username: ENC(uUVVLhshTArj/Gd/AjpCIg==)
+    password: ENC(PlN23RnLACpu7quB0QRlnA==)
+    url: jdbc:mysql://192.168.52.154:3306/zlink
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis-plus:
@@ -52,3 +56,9 @@ crap:
     tmp: /tmp/crap/tmp                           # 临时目录
     log: /tmp/crap/log                           # 日志目录
     source: /tmp/crap/source                     # 源码目录, public 为 web 根目录, public/upload 为上传目录
+
+jasypt:
+  encryptor:
+    password: ${ENCRYPTOR_PASSWORD:b1ncjbS<AYq'/iH}
+    algorithm: PBEWithMD5AndDES
+    iv-generator-classname: org.jasypt.iv.NoIvGenerator

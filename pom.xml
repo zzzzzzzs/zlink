@@ -26,9 +26,10 @@
 
         <!-- project -->
         <zlink.verzion>0.0.1</zlink.verzion>
+
         <mybatis-plus.version>3.5.2</mybatis-plus.version>
-
-
+        <jasypt.version>3.0.4</jasypt.version>
+<!--        <swagger.version>2.0.2.RELEASE</swagger.version>-->
     </properties>
 
     <modules>
@@ -40,6 +41,17 @@
     </modules>
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>com.spring4all</groupId>-->
+<!--            <artifactId>swagger-spring-boot-starter</artifactId>-->
+<!--            <version>${swagger.version}</version>-->
+<!--        </dependency>-->
+        <!-- https://mvnrepository.com/artifact/com.github.ulisesbocchio/jasypt-spring-boot-starter -->
+        <dependency>
+            <groupId>com.github.ulisesbocchio</groupId>
+            <artifactId>jasypt-spring-boot-starter</artifactId>
+            <version>${jasypt.version}</version>
+        </dependency>
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
