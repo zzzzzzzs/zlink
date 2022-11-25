@@ -12,43 +12,13 @@ spring:
   datasource:
     username: root
     password: 123456
-    url: jdbc:mysql://localhost:3306/crap
+    url: jdbc:mysql://192.168.52.154:3306/zlink
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis-plus:
-  mapper-locations: classpath*:work/sajor/**/*Mapper.xml
-  typeAliasesPackage: work.sajor.**.entity
-  typeEnumsPackage: work.sajor.**                  # enum 定义在实体扩展类内
+  mapper-locations: classpath*:/mapper/*Mapper.xml
+  #实体扫描，多个package用逗号或者分号分隔
+  typeAliasesPackage: com.zlink.entity
   global-config:
-    banner: false                                 # 关闭 MP3.0 自带的banner
-    workerId: 1                                   # SnowFlake : 机器 ID
-    datacenterId: 1                               # SnowFlake : 数据标识 ID
     db-config:
-      id-type: ASSIGN_ID                          # 使用 SnowFlake. 主键类型  0:"数据库ID自增",1:"该类型为未设置主键类型", 2:"用户输入ID",3:"全局唯一ID (数字类型唯一ID)", 4:"全局唯一ID UUID",5:"字符串全局唯一ID (idWorker 的字符串表示)";
-      table-underline: true                       # 默认数据库表下划线命名
-      logic-delete-field: delete_flag             # 全局逻辑删除字段值 3.3.0开始支持，详情看下面。
-      logic-delete-value: now()                   # 逻辑已删除值(默认为 1)
-      logic-not-delete-value: "null"              # 逻辑未删除值(默认为 0)
-
-logging:
-  level:
-    work.sajor: debug
-    org.*: warn
-    com.*: warn
-    org.springframework.data: error
-    org.springframework.boot.autoconfigure.orm.jpa: error
-    work.sajor.crap.server: info
-    work.sajor.crap.core.security.component: info
-    work.sajor.crap.core.security.jwt: info
-  file:
-    path: /tmp/crap/log
-
-# -------------------------- crap -----------------------------
-crap:
-  id: ${hostname:localhost}                       # 节点标识
-
-  # * 挂载目录
-  path:
-    tmp: /tmp/crap/tmp                           # 临时目录
-    log: /tmp/crap/log                           # 日志目录
-    source: /tmp/crap/source                     # 源码目录, public 为 web 根目录, public/upload 为上传目录
+      id-type: auto

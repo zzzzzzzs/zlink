@@ -10,66 +10,69 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
-    <groupId>work.sajor</groupId>
+    <groupId>com.zlink</groupId>
     <artifactId>zlink</artifactId>
     <version>0.0.1</version>
-    <name>zlink</name>
-    <description>zlink</description>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>zlink-admin</module>
+        <module>zlink-alert</module>
+        <module>zlink-common</module>
+        <module>zlink-metadata</module>
+    </modules>
 
     <properties>
         <java.version>11</java.version>
-
-        <!-- crap -->
-        <crap.version>0.0.1</crap.version>
-
-        <!-- project -->
-        <zlink.verzion>0.0.1</zlink.verzion>
-        <mybatis-plus.version>3.5.2</mybatis-plus.version>
-
-
+        <mybatis-plus.version>3.4.1</mybatis-plus.version>
+        <hutool.version>5.8.9</hutool.version>
+        <mysql-connector-java.version>8.0.22</mysql-connector-java.version>
+        <guava.version>31.1-jre</guava.version>
+        <lombok.version>1.18.24</lombok.version>
+        <spring-boot-dependencies.version>2.7.5</spring-boot-dependencies.version>
     </properties>
 
-    <modules>
-        <module>crap</module>
-        <module>zlink-admin</module>
-        <module>zlink-generator</module>
-        <module>zlink-common</module>
-        <module>zlink-modules</module>
-    </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>cn.hutool</groupId>
-            <artifactId>hutool-all</artifactId>
-            <version>5.8.9</version>
-        </dependency>
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.baomidou</groupId>
-            <artifactId>mybatis-plus-boot-starter</artifactId>
-            <version>${mybatis-plus.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>${mysql-connector-java.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-boot-starter</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.baomidou</groupId>
+                <artifactId>mybatis-plus-generator</artifactId>
+                <version>${mybatis-plus.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.projectlombok</groupId>
+                <artifactId>lombok</artifactId>
+                <version>${lombok.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>${spring-boot-dependencies.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 
     <repositories>

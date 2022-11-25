@@ -4,59 +4,38 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
+        <groupId>com.zlink</groupId>
         <artifactId>zlink</artifactId>
-        <groupId>work.sajor</groupId>
         <version>0.0.1</version>
     </parent>
 
-    <groupId>work.sajor</groupId>
     <artifactId>zlink-admin</artifactId>
-    <version>${zlink.verzion}</version>
-    <name>zlink-admin</name>
-    <description>zlink-admin</description>
-    <properties>
-        <java.version>11</java.version>
-    </properties>
 
     <dependencies>
-
-        <dependency>
-            <groupId>work.sajor</groupId>
-            <artifactId>crap-server</artifactId>
-            <version>${crap.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>work.sajor</groupId>
-            <artifactId>zlink-modules</artifactId>
-            <version>${zlink.verzion}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>work.sajor</groupId>
-            <artifactId>zlink-manager</artifactId>
-            <version>${zlink.verzion}</version>
-        </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-        </plugins>
     </build>
 
 </project>
