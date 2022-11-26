@@ -16,9 +16,17 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis-plus:
-  mapper-locations: classpath*:/mapper/*Mapper.xml
+  mapperLocations: classpath:/mapper/*.xml
   #实体扫描，多个package用逗号或者分号分隔
   typeAliasesPackage: com.zlink.entity
   global-config:
+    banner: false
     db-config:
       id-type: auto
+  configuration:
+    ## 日志
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+loggig:
+  level:
+    root: DEBUG

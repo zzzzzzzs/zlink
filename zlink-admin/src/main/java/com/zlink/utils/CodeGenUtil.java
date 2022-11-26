@@ -13,16 +13,16 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
  * @
  */
 public class CodeGenUtil {
-    private static String url = "jdbc:mysql://bigdata102:3306/TodaysMatters";
+    private static String url = "jdbc:mysql://192.168.52.154:3306/zlink";
     private static String userName = "root";
-    private static String password = "000000";
+    private static String password = "123456";
     private static String driverClassName = "com.mysql.cj.jdbc.Driver";
 
     public static void main(String[] args) {
         AutoGenerator mpg = new AutoGenerator();
         GlobalConfig gc = new GlobalConfig();
         String projectPath = System.getProperty("user.dir");
-        gc.setOutputDir(projectPath + "/src/main/java");
+        gc.setOutputDir(projectPath + "/zlink-admin/src/main/java");
         gc.setAuthor("zs");
         gc.setOpen(false);
         gc.setServiceName("%sService");
@@ -53,8 +53,8 @@ public class CodeGenUtil {
 
         // 包配置
         PackageConfig pc = new PackageConfig();
-        pc.setParent("com.me.todaymatters");
-        pc.setEntity("bean");
+        pc.setParent("com.zlink");
+        pc.setEntity("entity");
         pc.setService("service");
         pc.setMapper("dao");
         pc.setXml("dao.mapper");
@@ -62,8 +62,14 @@ public class CodeGenUtil {
 
         StrategyConfig config = new StrategyConfig();
         config.setNaming(NamingStrategy.underline_to_camel);
+        config.setEntityTableFieldAnnotationEnable(true);
+        config.setEntityLombokModel(true);
+        config.setEntityBuilderModel(true);
+        config.setRestControllerStyle(true);
+        config.setControllerMappingHyphenStyle(true);
+        config.setTablePrefix(pc.getModuleName() + "_");
 //        config.setTablePrefix("wx_");
-        config.setInclude(new String[]{"student"});
+        config.setInclude(new String[]{"job_sys_user"});
         mpg.setStrategy(config);
 
         mpg.setPackageInfo(pc);
