@@ -8,10 +8,6 @@ import com.zlink.model.ApiResponse;
 import com.zlink.model.Status;
 import com.zlink.utils.JacksonObject;
 import lombok.RequiredArgsConstructor;
-import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.AuthenticationException;
-import org.apache.shiro.authc.UsernamePasswordToken;
-import org.apache.shiro.subject.Subject;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -37,14 +33,11 @@ public class LoginService extends ServiceImpl<LoginMapper, JobSysUser> implement
     public ApiResponse authLogin(JacksonObject requestJson) {
         String username = requestJson.getString("username");
         String password = requestJson.getString("password");
-        Subject currentUser = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(username, password);
-        try {
-            currentUser.login(token);
+        Map<String, Object> user = getUser(username, password);
+        if (user != null) {
             return ApiResponse.ofSuccess("success");
-        } catch (AuthenticationException e) {
-            return ApiResponse.ofStatus(Status.FAIL, e);
         }
+        return ApiResponse.ofStatus(Status.E_503);
     }
 
 

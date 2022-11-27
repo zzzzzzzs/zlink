@@ -1,9 +1,12 @@
 package com.zlink.dao;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zlink.entity.JobDatasourceType;
 import com.zlink.entity.JobJdbcDatasource;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+
+import java.util.List;
 
 /**
  * <p>
@@ -14,6 +17,8 @@ import org.apache.ibatis.annotations.Mapper;
  * @since 2022-11-26
  */
 @Mapper
-public interface JobJdbcDatasourceMapper extends BaseMapper<JobJdbcDatasource> {
+public interface DatasourceMapper extends BaseMapper<JobJdbcDatasource> {
     Page<JobJdbcDatasource> pageDataSource(Page<JobJdbcDatasource> page, JobJdbcDatasource jobJdbcDatasource);
+
+    List<JobDatasourceType> listDataSourceType();
 }

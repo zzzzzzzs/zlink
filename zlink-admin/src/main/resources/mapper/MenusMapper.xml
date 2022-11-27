@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zlink.dao.MenusMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zlink.entity.JobSysMenus">
+        <id column="id" property="id" />
+        <result column="parent_id" property="parentId" />
+        <result column="name" property="name" />
+        <result column="path" property="path" />
+        <result column="sort" property="sort" />
+        <result column="role_id" property="roleId" />
+        <result column="create_time" property="createTime" />
+        <result column="update_time" property="updateTime" />
+        <result column="delete_status" property="deleteStatus" />
+    </resultMap>
+
+    <select id="listMenus" resultMap="BaseResultMap">
+        select id,
+               parent_id,
+               name,
+               path,
+               sort,
+               role_id
+        from job_sys_menus
+        where delete_status = 0
+    </select>
+</mapper>
