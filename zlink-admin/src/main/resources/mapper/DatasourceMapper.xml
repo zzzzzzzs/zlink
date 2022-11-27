@@ -17,16 +17,20 @@
 
     <select id="pageDataSource" resultMap="BaseResultMap">
         select id,
-               database_type,
-               database_name,
-               user_name,
-               password,
-               jdbc_url,
-               jdbc_driver_class,
-               comments,
-               create_time,
-               update_time
+        database_type,
+        database_name,
+        user_name,
+        password,
+        jdbc_url,
+        jdbc_driver_class,
+        comments,
+        create_time,
+        update_time
         from job_jdbc_datasource
+        where 1 = 1
+        <if test="param.id != null">
+            and id = #{param.id}
+        </if>
     </select>
 
     <select id="listDataSourceType" resultType="com.zlink.entity.JobDatasourceType">

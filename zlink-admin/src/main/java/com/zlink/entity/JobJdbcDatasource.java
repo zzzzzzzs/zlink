@@ -81,13 +81,13 @@ public class JobJdbcDatasource extends BaseEntity {
      * System 创建时间
      */
     @TableField("create_time")
-    private String createTime;
+    private LocalDateTime createTime;
 
     /**
      * System 更新时间
      */
     @TableField("update_time")
-    private String updateTime;
+    private LocalDateTime updateTime;
 
     /**
      * 是否是内网

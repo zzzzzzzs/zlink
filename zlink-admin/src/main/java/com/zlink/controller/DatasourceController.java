@@ -6,14 +6,13 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.zlink.entity.JobJdbcDatasource;
 import com.zlink.model.ApiResponse;
 import com.zlink.service.DatasourceService;
+import com.zlink.utils.JacksonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
-import java.sql.Connection;
-import java.sql.DriverManager;
 
 /**
  * <p>
@@ -57,6 +56,15 @@ public class DatasourceController {
     public ApiResponse addDataSource(@RequestBody JobJdbcDatasource jobJdbcDatasource) {
         return ApiResponse.ofSuccess(datasourceService.saveOrUpdate(jobJdbcDatasource));
     }
+
+    /*
+     * 删除数据源
+     */
+    @RequestMapping(value = "/delDataSource", method = RequestMethod.POST)
+    public ApiResponse delDataSource(@RequestBody JacksonObject json) {
+        return ApiResponse.ofSuccess(datasourceService.removeById(json.getBigInteger("id")));
+    }
+
 
     /*
      * 数据源下拉选

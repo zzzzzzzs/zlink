@@ -5,6 +5,7 @@ import com.zlink.entity.JobDatasourceType;
 import com.zlink.entity.JobJdbcDatasource;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -18,7 +19,7 @@ import java.util.List;
  */
 @Mapper
 public interface DatasourceMapper extends BaseMapper<JobJdbcDatasource> {
-    Page<JobJdbcDatasource> pageDataSource(Page<JobJdbcDatasource> page, JobJdbcDatasource jobJdbcDatasource);
+    Page<JobJdbcDatasource> pageDataSource(Page<JobJdbcDatasource> page, @Param("param") JobJdbcDatasource jobJdbcDatasource);
 
     List<JobDatasourceType> listDataSourceType();
 }
