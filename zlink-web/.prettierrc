@@ -1,0 +1,9 @@
+// 格式化代码用的配置文件
+{
+  "useTabs": false,
+  "tabWidth": 4,
+  "printWidth": 200,
+  "singleQuote": true,
+  "trailingComma": "none",
+  "semi": false
+}
