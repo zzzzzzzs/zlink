@@ -2,7 +2,7 @@ package com.zlink.common.model;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.lang.reflect.Field;
 
 /**
  * @author zs
@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
  */
 @Data
 public class Table {
+
     private String name;
     private String schema;
     private String catalog;
@@ -18,6 +19,4 @@ public class Table {
     private String engine;
     private String options;
     private Long rows;
-    private LocalDateTime createTime;
-    private LocalDateTime updateTime;
 }

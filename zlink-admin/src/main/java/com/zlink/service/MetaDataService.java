@@ -1,12 +1,15 @@
 package com.zlink.service;
 
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zlink.common.model.Schema;
 import com.zlink.dao.DatasourceMapper;
 import com.zlink.entity.JobJdbcDatasource;
 import com.zlink.metadata.driver.Driver;
 import com.zlink.model.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author zs
@@ -16,9 +19,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class MetaDataService extends ServiceImpl<DatasourceMapper, JobJdbcDatasource> {
 
-    public ApiResponse getSchemaAndTable(Integer id) {
+    public List<Schema> getSchemaAndTable(Integer id) {
         JobJdbcDatasource datasource = getById(id);
         Driver driver = Driver.build(datasource.getDriverConfig());
-        return null;
+        List<Schema> schemasAndTables = driver.getSchemasAndTables();
+        driver.close();
+        return schemasAndTables;
     }
 }

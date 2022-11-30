@@ -167,10 +167,10 @@ export default {
     async addDataSource() {
       // console.log(this.addDataSourceForm)
       const {data: res} = await this.$http.post('datasource/addDataSource', this.addDataSourceForm)
-      await this.getDataSourceList()
       this.testJdbc().then(r => {
         if (r === true) this.addDataSourceDialogVisible = false
       })
+      await this.getDataSourceList()
     },
     // 删除数据源
     async delDataSource(id) {

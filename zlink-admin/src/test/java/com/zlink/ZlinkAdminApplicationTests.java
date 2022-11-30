@@ -1,11 +1,14 @@
 package com.zlink;
 
+import com.zlink.metadata.driver.Driver;
+import com.zlink.metadata.driver.DriverConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ServiceLoader;
 
 @SpringBootTest
 class ZlinkAdminApplicationTests {
@@ -22,6 +25,14 @@ class ZlinkAdminApplicationTests {
         Connection conn = DriverManager.getConnection(url, username, password);//用参数得到连接对象
         System.out.println("连接成功！");
         System.out.println(conn);
+    }
+
+    @Test
+    public void spiTest() {
+        ServiceLoader<Driver> drivers = ServiceLoader.load(Driver.class);
+        for (Driver driver : drivers) {
+            System.out.println(driver);
+        }
     }
 
 }

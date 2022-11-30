@@ -39,17 +39,44 @@
     </el-card>
 
 
+    <el-input
+      placeholder="输入关键字进行过滤"
+      v-model="filterText">
+    </el-input>
+    <el-tree
+      class="filter-tree"
+      :data="metaDataList"
+      show-checkbox
+      :props="defaultProps"
+      :filter-node-method="filterNode"
+      ref="tree">
+    </el-tree>
+
+
   </div>
 </template>
 
 <script>
 export default {
   name: 'MetaData',
+  watch: {
+    filterText(val) {
+      console.log(val)
+      this.$refs.tree.filter(val);
+    }
+  },
   data() {
     return {
+      filterText: '',
       dataSourceList: [],
       sourceId: '',
       targetId: '',
+      // metaDataList
+      metaDataList: [],
+      defaultProps: {
+        children: 'tables',
+        label: 'name'
+      }
     }
   },
   // 刚进入界面首先调用这里的函数
@@ -67,9 +94,17 @@ export default {
       console.log(this.dataSourceList)
     },
     async getSchemaAndTable() {
-      console.log(this.sourceId)
       const {data: res} = await this.$http.get('metadata/getSchemaAndTable', {params: {id: this.sourceId}})
+      if (res.code !== 200) {
+        return this.$message.error('获取元数据失败！')
+      }
+      this.metaDataList = res.data
+      console.log(res)
     },
+    filterNode(value, metaDataList) {
+      if (!value) return true;
+      return metaDataList.name.indexOf(value) !== -1;
+    }
   }
 }
 </script>

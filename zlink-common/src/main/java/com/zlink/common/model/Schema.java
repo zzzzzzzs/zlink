@@ -12,8 +12,8 @@ import java.util.List;
 public class Schema {
     private String name;
     private List<Table> tables;
-    private List<String> views;
-    private List<String> functions;
-    private List<String> userFunctions;
-    private List<String> modules;
+
+    public Schema(String name) {
+        this.name = name;
+    }
 }
