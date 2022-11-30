@@ -9,11 +9,16 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
+    <groupId>com.zlink</groupId>
     <artifactId>zlink-metadata-mysql</artifactId>
+    <version>0.0.1</version>
+    <dependencies>
+        <dependency>
+            <groupId>com.zlink</groupId>
+            <artifactId>zlink-metadata-base</artifactId>
+            <version>0.0.1</version>
+        </dependency>
+    </dependencies>
 
-    <properties>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-    </properties>
 
 </project>

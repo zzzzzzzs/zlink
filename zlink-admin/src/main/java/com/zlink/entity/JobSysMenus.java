@@ -67,10 +67,4 @@ public class JobSysMenus {
     @TableField("update_time")
     private LocalDateTime updateTime;
 
-    /**
-     * 是否有效  0有效  1无效
-     */
-    @TableField("delete_status")
-    private Boolean deleteStatus;
-
 }

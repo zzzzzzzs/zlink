@@ -68,7 +68,7 @@ export default {
       iconsDict: {
         '1': 'iconfont icon-user',
         '2': 'iconfont icon-tijikongjian',
-        '101': 'iconfont icon-shangpin',
+        '3': 'iconfont icon-shangpin',
         '102': 'iconfont icon-danju',
         '145': 'iconfont icon-baobiao'
       },
@@ -119,7 +119,7 @@ export default {
 
 
 .el-header {
-  background-color: #5a27a8;
+  background-color: #e1dee5;
   display: flex;
   justify-content: space-between;
   padding: 0;
@@ -138,11 +138,11 @@ export default {
 }
 
 .el-aside {
-  background-color: #1eacda;
+  background-color: #2c2d2f;
 }
 
 .el-main {
-  background-color: #df5000;
+  background-color: #f3f2f2;
 
   .el-menu {
     border-right: none;

@@ -11,6 +11,7 @@ import com.baomidou.mybatisplus.annotation.TableField;
 
 import java.io.Serializable;
 
+import com.zlink.metadata.driver.DriverConfig;
 import lombok.*;
 import lombok.experimental.Accessors;
 
@@ -94,4 +95,8 @@ public class JobJdbcDatasource extends BaseEntity {
      */
     @TableField(exist = false)
     private Boolean isInner;
+
+    public DriverConfig getDriverConfig() {
+        return new DriverConfig(databaseName, databaseType, jdbcDriverClass, jdbcUrl, userName, password);
+    }
 }

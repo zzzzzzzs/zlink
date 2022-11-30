@@ -45,6 +45,19 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.zlink</groupId>
+            <artifactId>zlink-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zlink</groupId>
+            <artifactId>zlink-metadata-base</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zlink</groupId>
+            <artifactId>zlink-metadata-mysql</artifactId>
+        </dependency>
+
     </dependencies>
 
     <build>

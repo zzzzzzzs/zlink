@@ -11,9 +11,9 @@ export default {
       menulist: [],
       // 图标绑定字典
       iconsDict: {
-        '125': 'iconfont icon-user',
-        '103': 'iconfont icon-tijikongjian',
-        '101': 'iconfont icon-shangpin',
+        '1': 'iconfont icon-user',
+        '2': 'iconfont icon-tijikongjian',
+        '3': 'iconfont icon-shangpin',
         '102': 'iconfont icon-danju',
         '145': 'iconfont icon-baobiao'
       },
@@ -56,7 +56,7 @@ export default {
 
 
 .el-header {
-  background-color: #5a27a8;
+  background-color: #c8c4cc;
   display: flex;
   justify-content: space-between;
   padding: 0;
@@ -79,7 +79,7 @@ export default {
 }
 
 .el-main {
-  background-color: #df5000;
+  background-color: #f8f8f4;
 
   .el-menu {
     border-right: none;

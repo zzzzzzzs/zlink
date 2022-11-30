@@ -2,7 +2,6 @@ package com.zlink.dao;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.zlink.entity.JobSysUser;
-import com.zlink.utils.JacksonObject;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.Map;

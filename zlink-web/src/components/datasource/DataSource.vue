@@ -126,7 +126,7 @@ export default {
     async getDataSourceList() {
       const {data: res} = await this.$http.get('datasource/listDataSource', {params: this.queryInfo})
       if (res.code !== 200) {
-        return this.$message.error('获取用户列表失败！')
+        return this.$message.error('获取数据源列表失败！')
       }
       this.dataSourceList = res.data.records
       this.total = res.data.total
@@ -194,7 +194,7 @@ export default {
     async testJdbc() {
       const {data: res} = await this.$http.post('datasource/testJdbc', this.addDataSourceForm)
       console.log(res)
-      if (res.data !== true) {
+      if (res.data !== '1') {
         this.$message.error('数据源测试连接失败！')
         return false
       }

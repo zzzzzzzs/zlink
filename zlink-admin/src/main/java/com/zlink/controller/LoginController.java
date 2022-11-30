@@ -1,9 +1,9 @@
 package com.zlink.controller;
 
 
+import com.zlink.common.utils.JacksonObject;
 import com.zlink.model.ApiResponse;
 import com.zlink.service.LoginService;
-import com.zlink.utils.JacksonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

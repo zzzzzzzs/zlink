@@ -2,11 +2,11 @@ package com.zlink.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zlink.common.utils.JacksonObject;
 import com.zlink.dao.LoginMapper;
 import com.zlink.entity.JobSysUser;
 import com.zlink.model.ApiResponse;
 import com.zlink.model.Status;
-import com.zlink.utils.JacksonObject;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

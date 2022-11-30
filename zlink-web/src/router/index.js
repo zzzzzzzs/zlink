@@ -9,6 +9,8 @@ const Home = () => import(/* webpackChunkName: "login_home_welcome" */ '../compo
 const Welcome = () => import(/* webpackChunkName: "login_home_welcome" */ '../components/Welcome')
 // import DataSource from "@/components/datasource/DataSource";
 const DataSource = () => import(/* webpackChunkName: "Data_Source" */ '../components/datasource/DataSource')
+const MetaData = () => import(/* webpackChunkName: "Meta_Data" */ '../components/metadata/MetaData')
+
 
 Vue.use(VueRouter)
 
@@ -27,6 +29,7 @@ const routes = [
     children: [
       {path: '/welcome', component: Welcome},
       {path: '/datasource', component: DataSource},
+      {path: '/metadata', component: MetaData},
     ]
   }
 ]

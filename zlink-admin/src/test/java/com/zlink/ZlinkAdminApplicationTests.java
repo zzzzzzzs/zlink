@@ -15,8 +15,7 @@ class ZlinkAdminApplicationTests {
     }
 
     @Test
-    public void jdbcall() throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.cj.jdbc.Driver");
+    public void jdbcall() throws SQLException {
         String url = "jdbc:mysql://192.168.52.154:3306/zlink";
         String username = "root";
         String password = "123456";

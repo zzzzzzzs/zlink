@@ -3,10 +3,11 @@ package com.zlink.controller;
 
 import cn.hutool.core.net.NetUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zlink.common.utils.JacksonObject;
 import com.zlink.entity.JobJdbcDatasource;
+import com.zlink.metadata.driver.Driver;
 import com.zlink.model.ApiResponse;
 import com.zlink.service.DatasourceService;
-import com.zlink.utils.JacksonObject;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -27,7 +28,7 @@ import java.net.UnknownHostException;
 @RequiredArgsConstructor
 @CrossOrigin
 @Slf4j
-public class DatasourceController {
+public class DataSourceController {
 
     private final DatasourceService datasourceService;
 
@@ -79,9 +80,7 @@ public class DatasourceController {
      */
     @RequestMapping(value = "/testJdbc", method = RequestMethod.POST)
     public ApiResponse testJdbc(@RequestBody JobJdbcDatasource jobJdbcDatasource) {
-        return ApiResponse.ofSuccess(datasourceService.testJdbc(jobJdbcDatasource));
+        return ApiResponse.ofSuccess(Driver.build(jobJdbcDatasource.getDriverConfig()).test());
     }
-
-
 }
 

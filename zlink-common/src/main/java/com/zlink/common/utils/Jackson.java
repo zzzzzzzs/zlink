@@ -1,4 +1,4 @@
-package com.zlink.utils;
+package com.zlink.common.utils;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;

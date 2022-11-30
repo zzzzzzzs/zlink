@@ -1,4 +1,4 @@
-package com.zlink.conf;
+package com.zlink.common;
 
 import com.baomidou.mybatisplus.annotation.DbType;
 import com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor;

@@ -12,7 +12,6 @@
         <result column="role_id" property="roleId" />
         <result column="create_time" property="createTime" />
         <result column="update_time" property="updateTime" />
-        <result column="delete_status" property="deleteStatus" />
     </resultMap>
 
     <select id="listMenus" resultMap="BaseResultMap">
@@ -23,6 +22,5 @@
                sort,
                role_id
         from job_sys_menus
-        where delete_status = 0
     </select>
 </mapper>
