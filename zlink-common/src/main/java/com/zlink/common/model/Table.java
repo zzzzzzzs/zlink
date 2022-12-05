@@ -2,7 +2,7 @@ package com.zlink.common.model;
 
 import lombok.Data;
 
-import java.lang.reflect.Field;
+import java.util.List;
 
 /**
  * @author zs
@@ -10,7 +10,6 @@ import java.lang.reflect.Field;
  */
 @Data
 public class Table {
-
     private String name;
     private String schema;
     private String catalog;
@@ -19,4 +18,6 @@ public class Table {
     private String engine;
     private String options;
     private Long rows;
+    // 列信息
+    private List<Column> columns;
 }

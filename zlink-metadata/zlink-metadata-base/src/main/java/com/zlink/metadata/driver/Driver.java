@@ -2,7 +2,9 @@ package com.zlink.metadata.driver;
 
 import com.google.common.base.Preconditions;
 import com.zlink.common.exception.MetaDataException;
+import com.zlink.common.model.Column;
 import com.zlink.common.model.Schema;
+import com.zlink.common.model.Table;
 import com.zlink.metadata.query.IDBQuery;
 
 import java.util.List;
@@ -69,4 +71,10 @@ public interface Driver extends AutoCloseable {
     IDBQuery getDBQuery();
 
     List<Schema> getSchemasAndTables();
+
+    List<Column> listColumns(String schemaName, String tableName);
+
+    String generateCreateTableSql(Table table, String targetSchema);
+
+    boolean execute(String sql) throws Exception;
 }

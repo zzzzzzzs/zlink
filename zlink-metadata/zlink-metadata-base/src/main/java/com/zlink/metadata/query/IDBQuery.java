@@ -60,4 +60,54 @@ public interface IDBQuery {
      * 表记录数
      */
     String rows();
+
+    /**
+     * 字段名称
+     */
+    String columnName();
+
+    /**
+     * 字段类型
+     */
+    String columnType();
+
+    /**
+     * 数据类型
+     */
+    String dataType();
+
+    /**
+     * 字段长度
+     */
+    String columnLength();
+
+    /**
+     * @return 小数范围
+     */
+    String scale();
+
+    /**
+     * 字段注释
+     */
+    String columnComment();
+
+    /**
+     * 主键字段
+     */
+    String columnKey();
+
+    /**
+     * 默认值
+     */
+    String defaultValue();
+
+    /**
+     * @return 是否允许为 NULL
+     */
+    String isNullable();
+
+    /**
+     * 字段序号
+     */
+    String columnPosition();
 }

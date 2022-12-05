@@ -1,14 +1,16 @@
 package com.zlink.controller;
 
 
+import com.zlink.common.model.Table;
+import com.zlink.common.utils.JacksonObject;
 import com.zlink.model.ApiResponse;
 import com.zlink.service.MetaDataService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
 
 /**
  * <p>
@@ -35,6 +37,20 @@ public class MetaDataController {
         return ApiResponse.ofSuccess(metaDataService.getSchemaAndTable(id));
     }
 
+    /**
+     * 获取元数据的指定表的列
+     */
+    @RequestMapping(value = "/listColumns", method = RequestMethod.GET)
+    public ApiResponse listColumns(Integer id, String schemaName, String tableName) {
+        return ApiResponse.ofSuccess(metaDataService.listColumns(id, schemaName, tableName));
+    }
 
+    /**
+     * 同步表结构
+     */
+    @RequestMapping(value = "/syncTableStruct", method = RequestMethod.POST)
+    public ApiResponse syncTableStruct(@RequestBody JacksonObject json) {
+        return ApiResponse.ofSuccess(metaDataService.syncTableStruct(json));
+    }
 }
 

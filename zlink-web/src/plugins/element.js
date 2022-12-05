@@ -36,7 +36,8 @@ import {
   Step,
   CheckboxGroup,
   Checkbox,
-  Upload
+  Upload,
+  Drawer,
 } from 'element-ui'
 
 
@@ -75,6 +76,7 @@ Vue.use(Step)
 Vue.use(CheckboxGroup)
 Vue.use(Checkbox)
 Vue.use(Upload)
+Vue.use(Drawer)
 
 // 全局修改默认配置，点击空白处不能关闭弹窗
 Dialog.props.closeOnClickModal.default = false

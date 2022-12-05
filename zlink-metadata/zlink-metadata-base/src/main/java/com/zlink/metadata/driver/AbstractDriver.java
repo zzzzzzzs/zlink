@@ -3,6 +3,7 @@ package com.zlink.metadata.driver;
 import com.alibaba.druid.pool.DruidDataSource;
 import com.alibaba.druid.pool.DruidPooledConnection;
 import com.zlink.common.assertion.Asserts;
+import com.zlink.common.model.Column;
 import com.zlink.common.model.Schema;
 import com.zlink.common.model.Table;
 import com.zlink.metadata.query.IDBQuery;
@@ -134,6 +135,7 @@ public abstract class AbstractDriver implements Driver {
         ResultSet results = null;
         IDBQuery dbQuery = getDBQuery();
         String sql = dbQuery.tablesSql(schemaName);
+        logger.info("tablesSql is : {}", sql);
         try {
             preparedStatement = conn.get().prepareStatement(sql);
             results = preparedStatement.executeQuery();
@@ -175,4 +177,16 @@ public abstract class AbstractDriver implements Driver {
         return tableList;
     }
 
+    @Override
+    public abstract List<Column> listColumns(String schemaName, String tableName);
+
+    @Override
+    public boolean execute(String sql) throws Exception {
+        Asserts.checkNullString(sql, "Sql 语句为空");
+        try (Statement statement = conn.get().createStatement()) {
+            // logger.info("执行sql的连接id：" + ((DruidPooledConnection) conn).getTransactionInfo().getId());
+            statement.execute(sql);
+        }
+        return true;
+    }
 }
