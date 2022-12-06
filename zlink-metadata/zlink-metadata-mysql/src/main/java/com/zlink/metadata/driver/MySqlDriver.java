@@ -84,7 +84,7 @@ public class MySqlDriver extends AbstractDriver {
                     column.setDataType(results.getString(dbQuery.dataType()));
                 }
                 if (columnList.contains(dbQuery.columnLength())) {
-                    column.setLength(results.getInt(dbQuery.columnLength()));
+                    column.setLength(results.getLong(dbQuery.columnLength()));
                 }
                 if (columnList.contains(dbQuery.scale())) {
                     column.setScale(results.getInt(dbQuery.scale()));
@@ -124,18 +124,17 @@ public class MySqlDriver extends AbstractDriver {
             // 数值相关
             case "bigint":
                 javaType.setType("java.lang.Long");
-                javaType.setSize(8);
+                javaType.setSize(8L);
                 break;
             case "tinyint":
                 javaType.setType("java.lang.Integer");
-                javaType.setSize(4);
+                javaType.setSize(4L);
                 break;
             case "binary":
                 break;
             case "blob":
                 break;
-            case "char":
-                break;
+
             case "decimal":
                 javaType.setType("java.math.BigDecimal");
                 javaType.setSize(column.getLength());
@@ -155,15 +154,13 @@ public class MySqlDriver extends AbstractDriver {
                 break;
             case "int":
                 javaType.setType("java.lang.Integer");
-                javaType.setSize(4);
+                javaType.setSize(4L);
                 break;
             case "json":
                 javaType.setType("java.lang.String");
-                javaType.setSize(Integer.MAX_VALUE);
+                javaType.setSize((long) Integer.MAX_VALUE);
                 break;
             case "longblob":
-                break;
-            case "longtext":
                 break;
             case "mediumblob":
                 break;
@@ -173,26 +170,24 @@ public class MySqlDriver extends AbstractDriver {
                 break;
             case "smallint":
                 javaType.setType("java.lang.Integer");
-                javaType.setSize(4);
-                break;
-            case "text":
-                javaType.setType("java.lang.String");
-                javaType.setSize(Integer.MAX_VALUE);
+                javaType.setSize(4L);
                 break;
             // 时间相关
             case "time":
                 javaType.setType("java.lang.String");
-                javaType.setSize(32);
+                javaType.setSize(32L);
                 break;
             case "timestamp":
                 javaType.setType("java.lang.String");
-                javaType.setSize(32);
+                javaType.setSize(32L);
                 break;
             case "datetime":
                 javaType.setType("java.lang.String");
-                javaType.setSize(32);
+                javaType.setSize(32L);
                 break;
             case "date":
+                javaType.setType("java.lang.String");
+                javaType.setSize(32L);
                 break;
             case "varbinary":
                 javaType.setType("java.lang.String");
@@ -203,9 +198,21 @@ public class MySqlDriver extends AbstractDriver {
                 javaType.setType("java.lang.String");
                 javaType.setSize(column.getLength());
                 break;
+            case "char":
+                javaType.setType("java.lang.String");
+                javaType.setSize(column.getLength());
+                break;
+            case "text":
+                javaType.setType("java.lang.String");
+                javaType.setSize((long) Integer.MAX_VALUE);
+                break;
+            case "longtext":
+                javaType.setType("java.lang.String");
+                javaType.setSize((long) Integer.MAX_VALUE);
+                break;
             default:
                 javaType.setType("java.lang.String");
-                javaType.setSize(1024);
+                javaType.setSize(1024L);
                 break;
         }
         column.setJavaType(javaType);
@@ -224,7 +231,7 @@ public class MySqlDriver extends AbstractDriver {
             case "java.lang.Float":
                 return String.format("float(%s, %s)", javaType.getSize(), javaType.getScale());
             case "java.lang.String":
-                if (javaType.getSize().equals(Integer.MAX_VALUE)) {
+                if (javaType.getSize() >= Integer.MAX_VALUE) {
                     return String.format("text");
                 }
                 return String.format("varchar(%s)", javaType.getSize());
@@ -241,14 +248,17 @@ public class MySqlDriver extends AbstractDriver {
                 .append(".")
                 .append(table.getName()).append(" (\n");
         for (Column column : table.getColumns()) {
-            logger.error("column : {}", column);
-            sb.append("  `")
-                    .append(column.getName()).append("`  ")
-                    .append(mapMysqlType(column.getJavaType()));
-            if (Asserts.isAllNotNullString(column.getComment())) {
-                sb.append(" COMMENT '").append(column.getComment()).append("'");
+            try {
+                sb.append("  `")
+                        .append(column.getName()).append("`  ")
+                        .append(mapMysqlType(column.getJavaType()));
+                if (Asserts.isAllNotNullString(column.getComment())) {
+                    sb.append(" COMMENT '").append(column.getComment()).append("'");
+                }
+                sb.append(",\r\n");
+            } catch (Exception e) {
+                logger.error("Column {} 出现异常 {}", column, e);
             }
-            sb.append(",\r\n");
         }
         sb.deleteCharAt(sb.length() - 3);
         sb.append(") ENGINE=InnoDB ");

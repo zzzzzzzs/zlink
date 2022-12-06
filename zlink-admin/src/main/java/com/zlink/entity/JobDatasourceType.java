@@ -26,4 +26,10 @@ public class JobDatasourceType {
      */
     @TableField("database_type")
     private String databaseType;
+
+    /**
+     * jdbc driver class
+     */
+    @TableField("jdbc_driver_class")
+    private String jdbcDriverClass;
 }

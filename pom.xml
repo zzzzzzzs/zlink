@@ -20,10 +20,13 @@
         <module>zlink-alert</module>
         <module>zlink-common</module>
         <module>zlink-metadata</module>
+        <module>zlink-cdc</module>
+        <module>zlink-flink</module>
     </modules>
 
     <properties>
         <java.version>11</java.version>
+        <scala.binary.version>2.12</scala.binary.version>
         <mybatis-plus.version>3.4.1</mybatis-plus.version>
         <mybatis.mapper.version>2.0.4</mybatis.mapper.version>
         <mybatis.pagehelper.version>1.2.9</mybatis.pagehelper.version>
@@ -35,6 +38,7 @@
         <spring-boot-dependencies.version>2.7.5</spring-boot-dependencies.version>
         <druid-starter>1.2.8</druid-starter>
         <postgresql.version>42.2.14</postgresql.version>
+        <flink.version>1.13.6</flink.version>
     </properties>
 
     <dependencyManagement>
@@ -115,11 +119,63 @@
                 <groupId>com.zlink</groupId>
                 <artifactId>zlink-metadata-base</artifactId>
                 <version>${project.version}</version>
-            </dependency><dependency>
-            <groupId>com.zlink</groupId>
-            <artifactId>zlink-metadata-mysql</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+            </dependency>
+            <dependency>
+                <groupId>com.zlink</groupId>
+                <artifactId>zlink-metadata-mysql</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- flink 相关 -->
+            <dependency>
+                <groupId>com.ververica</groupId>
+                <artifactId>flink-connector-mysql-cdc</artifactId>
+                <version>2.2.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-java</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-connector-jdbc_2.12</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-streaming-java_${scala.binary.version}</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-clients_${scala.binary.version}</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-runtime-web_2.12</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-table-api-java-bridge_${scala.binary.version}</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-table-planner-blink_${scala.binary.version}</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-streaming-scala_${scala.binary.version}</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.flink</groupId>
+                <artifactId>flink-table-common</artifactId>
+                <version>${flink.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

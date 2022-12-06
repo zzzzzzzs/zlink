@@ -10,6 +10,7 @@ const Welcome = () => import(/* webpackChunkName: "login_home_welcome" */ '../co
 // import DataSource from "@/components/datasource/DataSource";
 const DataSource = () => import(/* webpackChunkName: "Data_Source" */ '../components/datasource/DataSource')
 const MetaData = () => import(/* webpackChunkName: "Meta_Data" */ '../components/metadata/MetaData')
+const Cdc = () => import(/* webpackChunkName: "Cdc" */ '../components/cdc/Cdc')
 
 
 Vue.use(VueRouter)
@@ -30,6 +31,7 @@ const routes = [
       {path: '/welcome', component: Welcome},
       {path: '/datasource', component: DataSource},
       {path: '/metadata', component: MetaData},
+      {path: '/cdc', component: Cdc},
     ]
   }
 ]

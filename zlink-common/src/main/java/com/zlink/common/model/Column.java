@@ -13,7 +13,7 @@ public class Column {
     private String name;
     private String columnType;
     private String dataType;
-    private Integer length;
+    private Long length;
     private Integer scale;
     private String comment;
     private String columnKey;

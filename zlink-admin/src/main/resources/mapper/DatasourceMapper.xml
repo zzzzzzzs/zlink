@@ -35,6 +35,7 @@
 
     <select id="listDataSourceType" resultType="com.zlink.entity.JobDatasourceType">
         select database_type
+             , jdbc_driver_class
         from job_datasource_type
     </select>
 </mapper>

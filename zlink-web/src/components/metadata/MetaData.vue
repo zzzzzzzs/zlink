@@ -37,6 +37,7 @@
         <el-col :span="4">
           <el-button @click="drawer = true" type="primary" style="margin-left: 16px;">同步配置</el-button>
           <el-button @click="test" type="primary" style="margin-left: 16px;">创建表结构</el-button>
+          <el-button @click="localFlinkCDC" type="primary" style="margin-left: 16px;">本地flinkcdc</el-button>
         </el-col>
         <el-col :span="10">
           <div class="grid-content bg-purple">
@@ -129,6 +130,13 @@ export default {
     this.getDataSourceList()
   },
   methods: {
+    async localFlinkCDC() {
+      const {data: res} = await this.$http.post('metadata/localFlinkCDC', {
+        'sourceId': this.sourceId,
+        'targetData': this.targetData,
+        'tables': this.$refs.tree.getCheckedNodes(true)
+      })
+    },
     handleChange(value) {
       console.log(value);
       this.targetData.targetId = value[0]

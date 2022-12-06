@@ -10,6 +10,6 @@ import lombok.Data;
 public class JavaType {
     private String type;
     // 字符串长度 & 数值类型字节大小
-    private Integer size;
+    private Long size;
     private Integer scale;
 }

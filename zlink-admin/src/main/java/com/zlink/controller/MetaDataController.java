@@ -52,5 +52,17 @@ public class MetaDataController {
     public ApiResponse syncTableStruct(@RequestBody JacksonObject json) {
         return ApiResponse.ofSuccess(metaDataService.syncTableStruct(json));
     }
+
+    /**
+     * 本地模式 flink cdc
+     */
+    @RequestMapping(value = "/localFlinkCDC", method = RequestMethod.POST)
+    public ApiResponse localFlinkCDC(@RequestBody JacksonObject json) throws Exception {
+        return ApiResponse.ofSuccess(metaDataService.localFlinkCDC(json));
+    }
+
+
+
+
 }
 

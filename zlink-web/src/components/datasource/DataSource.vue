@@ -49,12 +49,13 @@
       <el-form :model="addDataSourceForm" ref="addDataSourceFormRef"
                label-width="140px">
         <el-form-item label="数据源类型：">
-          <el-select v-model="addDataSourceForm.databaseType" placeholder="请选择">
+          <el-select v-model="addDataSourceForm.databaseType" placeholder="请选择" @change="selectBtn">
             <el-option
               v-for="item in dataSourceType"
               :key="item.databaseType"
               :label="item.databaseType"
-              :value="item.databaseType">
+              :value="item.databaseType"
+            >
             </el-option>
           </el-select>
         </el-form-item>
@@ -71,7 +72,7 @@
           <el-input v-model="addDataSourceForm.jdbcUrl"></el-input>
         </el-form-item>
         <el-form-item label="jdbc driver class：">
-          <el-input v-model="addDataSourceForm.jdbcDriverClass"></el-input>
+          <el-input v-model="addDataSourceForm.jdbcDriverClass" :disabled="true"></el-input>
         </el-form-item>
         <el-form-item label="注释：">
           <el-input v-model="addDataSourceForm.comments"></el-input>
@@ -123,6 +124,11 @@ export default {
     this.getDataSourceList()
   },
   methods: {
+    selectBtn(value) {
+      this.dataSourceType.forEach(item => {
+        if (item.databaseType === value) this.addDataSourceForm.jdbcDriverClass = item.jdbcDriverClass
+      })
+    },
     async getDataSourceList() {
       const {data: res} = await this.$http.get('datasource/listDataSource', {params: this.queryInfo})
       if (res.code !== 200) {
@@ -150,6 +156,7 @@ export default {
         return this.$message.error('获取数据源类型失败！')
       }
       this.dataSourceType = res.data
+      console.log(this.dataSourceType);
     },
     // 监听 pagesize 改变的事件
     handleSizeChange(newSize) {
