@@ -20,4 +20,13 @@
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
+
+    <dependencies>
+        <dependency>
+            <groupId>com.zlink</groupId>
+            <artifactId>zlink-flink-1.13</artifactId>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
 </project>

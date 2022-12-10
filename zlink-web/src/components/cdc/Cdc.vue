@@ -62,6 +62,7 @@
         </el-col>
         <el-col :span="4">
           <el-button @click="localFlinkCDC" type="primary" style="margin-left: 16px;">local-cdc</el-button>
+          <el-button @click="getLocalFlinkInfo" type="primary" style="margin-left: 16px;">local-cdc-info</el-button>
         </el-col>
         <el-col :span="5">
           源端数据库表
@@ -137,34 +138,66 @@ export default {
     this.getDataSourceList()
   },
   methods: {
-    localFlinkCDC() {
+    async getLocalFlinkInfo() {
+      const {data: res} = await this.$http.get('cdc/getLocalFlinkInfo')
+      console.log(res)
+    },
+    async localFlinkCDC() {
       if (this.sourceArr.length == 0) return this.$message.error("源端数据库表不能为空")
       if (this.targetArr.length == 0) return this.$message.error("目标数据库表不能为空")
       if (this.sourceArr.length !== this.targetArr.length) return this.$message.error("两端表数据不一致")
-      console.log(this.sourceArr, this.targetArr)
-    },
+
+      var sourceJson = JSON.parse(JSON.stringify(this.sourceArr));
+      for (var i = 0; i < sourceJson.length; i++) {
+        delete sourceJson[i].id
+      }
+
+      var targetJson = JSON.parse(JSON.stringify(this.targetArr));
+      for (var i = 0; i < targetJson.length; i++) {
+        delete targetJson[i].id
+      }
+
+      const para = {
+        "source": {
+          "id": this.sourceId,
+          "sourceArr": sourceJson
+        },
+        "target": {
+          "id": this.targetId,
+          "targetArr": targetJson
+        },
+      }
+
+      console.log(para)
+      const {data: res} = await this.$http.post('cdc/localFlinkCDC', para)
+    }
+    ,
     sourceHandleCheckChange(data, checked) {
       this.sourceArr = []
       this.$refs.sourceTree.getCheckedNodes(true).forEach(it => {
-        this.sourceArr.push({id: it.schema + it.name, name: it.name})
+        this.sourceArr.push({id: it.schema + it.name, schema: it.schema, name: it.name})
       })
-    },
+    }
+    ,
     targetHandleCheckChange(data, checked) {
       this.targetArr = []
       this.$refs.targetTree.getCheckedNodes(true).forEach(it => {
-        this.targetArr.push({id: it.schema + it.name, name: it.name})
+        this.targetArr.push({id: it.schema + it.name, schema: it.schema, name: it.name})
       })
-    },
+    }
+    ,
     sourceFilterNode(value, sourceMetaDataList) {
       console.log('sourceFilterNode')
       if (!value) return true;
       return sourceMetaDataList.name.indexOf(value) !== -1;
-    },
+    }
+    ,
     targetFilterNode(value, targetMetaDataList) {
       console.log('targetFilterNode')
       if (!value) return true;
       return targetMetaDataList.name.indexOf(value) !== -1;
-    },
+    }
+    ,
     async getSchemaAndTable(val) {
       if (val === 'source') {
         const {data: res} = await this.$http.get('metadata/getSchemaAndTable', {params: {id: this.sourceId}})
@@ -175,7 +208,8 @@ export default {
         if (res.code !== 200) return this.$message.error('获取元数据失败！')
         this.targetMetaDataList = res.data
       }
-    },
+    }
+    ,
     async getDataSourceList() {
       const {data: res} = await this.$http.get('datasource/listDataSource')
       if (res.code !== 200) {
@@ -183,23 +217,28 @@ export default {
       }
       this.dataSourceList = res.data.records
       console.log(this.dataSourceList)
-    },
+    }
+    ,
     //设置禁止拖拽
     setJY() {
       this.disabled = true;
-    },
+    }
+    ,
     //设置启用拖拽
     setQY() {
       this.disabled = false;
-    },
+    }
+    ,
     //开始拖拽事件
     onStart() {
       this.drag = true;
-    },
+    }
+    ,
     //拖拽结束事件
     onEnd() {
       this.drag = false;
-    },
+    }
+    ,
   }
 }
 </script>

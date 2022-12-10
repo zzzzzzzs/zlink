@@ -1,10 +1,7 @@
 package com.zlink.metadata.driver;
 
 import com.zlink.common.assertion.Asserts;
-import com.zlink.common.model.Column;
-import com.zlink.common.model.JavaType;
-import com.zlink.common.model.Schema;
-import com.zlink.common.model.Table;
+import com.zlink.common.model.*;
 import com.zlink.metadata.query.IDBQuery;
 import com.zlink.metadata.query.MySqlQuery;
 import org.slf4j.Logger;
@@ -23,7 +20,7 @@ import java.util.List;
  */
 public class MySqlDriver extends AbstractDriver {
 
-    protected static Logger logger = LoggerFactory.getLogger(MySqlDriver.class);
+    private static Logger logger = LoggerFactory.getLogger(MySqlDriver.class);
 
 
     @Override
@@ -105,6 +102,7 @@ public class MySqlDriver extends AbstractDriver {
                     column.setPosition(results.getInt(dbQuery.columnPosition()));
                 }
                 mapJavaType(column);
+                mapFlinkType(column);
                 columns.add(column);
             }
         } catch (SQLException e) {
@@ -134,7 +132,6 @@ public class MySqlDriver extends AbstractDriver {
                 break;
             case "blob":
                 break;
-
             case "decimal":
                 javaType.setType("java.math.BigDecimal");
                 javaType.setSize(column.getLength());
@@ -217,6 +214,72 @@ public class MySqlDriver extends AbstractDriver {
         }
         column.setJavaType(javaType);
     }
+
+    // Flink 类型映射
+    // https://nightlies.apache.org/flink/flink-docs-release-1.16/docs/dev/table/types/
+    private void mapFlinkType(Column column) {
+        FlinkType flinkType = new FlinkType();
+        switch (column.getJavaType().getType()) {
+            case "java.lang.String":
+                flinkType.setType("STRING");
+                break;
+            case "java.lang.Boolean":
+                flinkType.setType("BOOLEAN");
+                break;
+            case "java.lang.Byte":
+                flinkType.setType("TINYINT");
+                break;
+            case "java.lang.Short":
+                flinkType.setType("SMALLINT");
+                break;
+            case "java.lang.Integer":
+                flinkType.setType("INT");
+                break;
+            case "java.lang.Long":
+                flinkType.setType("BIGINT");
+                break;
+            case "java.lang.Float":
+                flinkType.setType("FLOAT");
+                break;
+            case "java.lang.Double":
+                flinkType.setType("DOUBLE");
+                break;
+            case "java.sql.Date":
+                flinkType.setType("DATE");
+                break;
+            case "java.time.LocalDate":
+                flinkType.setType("DATE");
+                break;
+            case "java.sql.Time":
+                flinkType.setType("TIME(0)");
+                break;
+            case "java.time.LocalTime":
+                flinkType.setType("TIME(9)");
+                break;
+            case "java.sql.Timestamp":
+                flinkType.setType("TIMESTAMP(9)");
+                break;
+            case "java.time.LocalDateTime":
+                flinkType.setType("TIMESTAMP(9)");
+                break;
+            case "java.time.OffsetDateTime":
+                flinkType.setType("TIMESTAMP(9) WITH TIME ZONE");
+                break;
+            case "java.time.Instant":
+                flinkType.setType("TIMESTAMP_LTZ(9)");
+                break;
+            case "java.time.Duration":
+                flinkType.setType("INTERVAL SECOND(9)");
+                break;
+            case "java.time.Period":
+                flinkType.setType("INTERVAL YEAR(4) TO MONTH");
+                break;
+            default:
+                break;
+        }
+        column.setFlinkType(flinkType);
+    }
+
 
     private String mapMysqlType(JavaType javaType) {
         switch (javaType.getType()) {

@@ -1,15 +1,11 @@
 package com.zlink.controller;
 
 
-import com.zlink.common.model.Table;
 import com.zlink.common.utils.JacksonObject;
 import com.zlink.model.ApiResponse;
 import com.zlink.service.MetaDataService;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 
 /**
@@ -24,7 +20,6 @@ import java.util.List;
 @RequestMapping("/metadata")
 @RequiredArgsConstructor
 @CrossOrigin
-@Slf4j
 public class MetaDataController {
 
     private final MetaDataService metaDataService;
@@ -52,17 +47,5 @@ public class MetaDataController {
     public ApiResponse syncTableStruct(@RequestBody JacksonObject json) {
         return ApiResponse.ofSuccess(metaDataService.syncTableStruct(json));
     }
-
-    /**
-     * 本地模式 flink cdc
-     */
-    @RequestMapping(value = "/localFlinkCDC", method = RequestMethod.POST)
-    public ApiResponse localFlinkCDC(@RequestBody JacksonObject json) throws Exception {
-        return ApiResponse.ofSuccess(metaDataService.localFlinkCDC(json));
-    }
-
-
-
-
 }
 

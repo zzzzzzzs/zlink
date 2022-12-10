@@ -28,5 +28,4 @@ mybatis-plus:
     log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 
 loggig:
-  level:
-    root: DEBUG
+  config: classpath:log4j2.xml

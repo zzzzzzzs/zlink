@@ -22,4 +22,6 @@ public class Column {
     private Integer position;
     // 对应的 Java 类型
     private JavaType javaType;
+    // 对应的 flinksql 类型
+    private FlinkType flinkType;
 }

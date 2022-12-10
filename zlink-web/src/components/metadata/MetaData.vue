@@ -38,6 +38,7 @@
           <el-button @click="drawer = true" type="primary" style="margin-left: 16px;">同步配置</el-button>
           <el-button @click="test" type="primary" style="margin-left: 16px;">创建表结构</el-button>
           <el-button @click="localFlinkCDC" type="primary" style="margin-left: 16px;">本地flinkcdc</el-button>
+          <el-button @click="getThreadName" type="primary" style="margin-left: 16px;">获取线程</el-button>
         </el-col>
         <el-col :span="10">
           <div class="grid-content bg-purple">
@@ -130,6 +131,9 @@ export default {
     this.getDataSourceList()
   },
   methods: {
+    async getThreadName() {
+      const {data: res} = await this.$http.get('metadata/getThreadName')
+    },
     async localFlinkCDC() {
       const {data: res} = await this.$http.post('metadata/localFlinkCDC', {
         'sourceId': this.sourceId,
