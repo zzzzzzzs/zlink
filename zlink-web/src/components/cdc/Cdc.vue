@@ -7,7 +7,6 @@
       <el-breadcrumb-item>cdc</el-breadcrumb-item>
     </el-breadcrumb>
 
-
     <el-card>
       <el-row :gutter="24">
         <el-col :span="5">
@@ -92,6 +91,21 @@
         </el-col>
       </el-row>
     </el-card>
+
+    <el-card>
+      local-cdc 信息
+      <el-table :data='flinkInfos' border stripe>
+        <el-table-column label='编号' type='index'></el-table-column>
+        <el-table-column label='jobId' prop='jobId'></el-table-column>
+        <el-table-column label='url'>
+          <template slot-scope="scope">
+            <a :href="'http://'+scope.row.url+'/#/overview'" target="_blank">flink-web</a>
+          </template>
+        </el-table-column>
+        <el-table-column label='任务状态' prop='status'></el-table-column>
+      </el-table>
+    </el-card>
+
   </div>
 </template>
 
@@ -130,7 +144,8 @@ export default {
       disabled: false,
       //定义要被拖拽对象的数组
       sourceArr: [],
-      targetArr: []
+      targetArr: [],
+      flinkInfos: [],
     }
   },
   // 刚进入界面首先调用这里的函数
@@ -141,6 +156,10 @@ export default {
     async getLocalFlinkInfo() {
       const {data: res} = await this.$http.get('cdc/getLocalFlinkInfo')
       console.log(res)
+      if (res.code !== 200) return this.$message.error("获取 flink info 失败！")
+      this.$message.success("获取 flink info 成功！")
+      this.flinkInfos = res.data
+      console.log(this.flinkInfos)
     },
     async localFlinkCDC() {
       if (this.sourceArr.length == 0) return this.$message.error("源端数据库表不能为空")

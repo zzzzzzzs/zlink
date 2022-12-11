@@ -14,16 +14,16 @@ public class ApiResponse {
      * 状态码
      */
     private Integer code;
+    /**
+     * 返回数据
+     */
+    private Object data;
 
     /**
      * 返回内容
      */
     private String message;
 
-    /**
-     * 返回数据
-     */
-    private Object data;
 
     /**
      * 无参构造函数
@@ -39,22 +39,22 @@ public class ApiResponse {
      * @param message 返回内容
      * @param data    返回数据
      */
-    private ApiResponse(Integer code, String message, Object data) {
+    private ApiResponse(Integer code, Object data, String message) {
         this.code = code;
-        this.message = message;
         this.data = data;
+        this.message = message;
     }
 
     /**
      * 构造一个自定义的API返回
      *
      * @param code    状态码
-     * @param message 返回内容
      * @param data    返回数据
+     * @param message 返回内容
      * @return ApiResponse
      */
-    public static ApiResponse of(Integer code, String message, Object data) {
-        return new ApiResponse(code, message, data);
+    public static ApiResponse of(Integer code, Object data, String message) {
+        return new ApiResponse(code, data, message);
     }
 
     /**
@@ -95,7 +95,7 @@ public class ApiResponse {
      * @return ApiResponse
      */
     public static ApiResponse ofStatus(Status status, Object data) {
-        return of(status.getCode(), status.getMessage(), data);
+        return of(status.getCode(), data, status.getMessage());
     }
 
     /**
@@ -107,7 +107,7 @@ public class ApiResponse {
      * @return ApiResponse
      */
     public static <T extends BaseException> ApiResponse ofException(T t, Object data) {
-        return of(t.getCode(), t.getMessage(), data);
+        return of(t.getCode(), data, t.getMessage());
     }
 
     /**

@@ -45,7 +45,7 @@ public class MetaDataController {
      */
     @RequestMapping(value = "/syncTableStruct", method = RequestMethod.POST)
     public ApiResponse syncTableStruct(@RequestBody JacksonObject json) {
-        return ApiResponse.ofSuccess(metaDataService.syncTableStruct(json));
+        return metaDataService.syncTableStruct(json);
     }
 }
 

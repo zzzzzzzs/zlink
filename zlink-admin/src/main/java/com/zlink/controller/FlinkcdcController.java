@@ -6,6 +6,8 @@ import com.zlink.service.FlinkcdcService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.concurrent.ExecutionException;
+
 /**
  * @author zs
  * @date 2022/12/9
@@ -21,7 +23,7 @@ public class FlinkcdcController {
      * 本地模式 flink cdc
      */
     @RequestMapping(value = "/localFlinkCDC", method = RequestMethod.POST)
-    public ApiResponse localFlinkCDC(@RequestBody JacksonObject json) {
+    public ApiResponse localFlinkCDC(@RequestBody JacksonObject json) throws ExecutionException, InterruptedException {
         return ApiResponse.ofSuccess(flinkcdcService.localFlinkCDC(json));
     }
 
@@ -29,7 +31,7 @@ public class FlinkcdcController {
      * 获取 flink 状态
      */
     @RequestMapping(value = "/getLocalFlinkInfo", method = RequestMethod.GET)
-    public ApiResponse getFlinkInfo() {
+    public ApiResponse getFlinkInfo() throws ExecutionException, InterruptedException {
         return ApiResponse.ofSuccess(flinkcdcService.getLocalFlinkInfo());
     }
 

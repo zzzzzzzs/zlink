@@ -3,6 +3,9 @@ package com.zlink.cdc.mysql;
 import com.zlink.cdc.FlinkCDCConfig;
 import com.zlink.common.model.Column;
 import com.zlink.common.model.Table;
+import com.zlink.common.utils.NetUtils;
+import org.apache.flink.configuration.Configuration;
+import org.apache.flink.configuration.RestOptions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.SqlDialect;
@@ -19,8 +22,10 @@ public class MysqlCDCBuilder {
     private static Logger logger = LoggerFactory.getLogger(MysqlCDCBuilder.class);
 
 
-    public static StreamTableEnvironment create() {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+    public static StreamTableEnvironment create(int port) {
+        Configuration conf = new Configuration();
+        conf.setInteger(RestOptions.PORT, port);
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
         env.setParallelism(1);
         EnvironmentSettings settings = EnvironmentSettings.newInstance()
                 .useBlinkPlanner()
@@ -97,7 +102,9 @@ public class MysqlCDCBuilder {
     }
 
     public static void main(String[] args) {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        Configuration conf = new Configuration();
+        conf.setInteger(RestOptions.PORT, NetUtils.getAvailablePort());
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
         env.setParallelism(1);
         EnvironmentSettings settings = EnvironmentSettings.newInstance()
                 .useBlinkPlanner()

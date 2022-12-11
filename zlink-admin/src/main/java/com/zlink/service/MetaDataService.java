@@ -10,6 +10,8 @@ import com.zlink.common.utils.JacksonObject;
 import com.zlink.dao.DatasourceMapper;
 import com.zlink.entity.JobJdbcDatasource;
 import com.zlink.metadata.driver.Driver;
+import com.zlink.model.ApiResponse;
+import com.zlink.model.Status;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
@@ -46,7 +48,7 @@ public class MetaDataService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
     }
 
 
-    public boolean syncTableStruct(JacksonObject json) {
+    public ApiResponse syncTableStruct(JacksonObject json) {
         Integer sourceId = json.getBigInteger("sourceId").intValue();
         Integer targetId = json.getNode("targetData").get("targetId").asInt();
         String targetSchema = json.getNode("targetData").get("targetSchema").asText();
@@ -68,10 +70,10 @@ public class MetaDataService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
             }
             sourceDriver.close();
             targetDriver.close();
-            return true;
+            return ApiResponse.ofSuccess(true);
         } catch (Exception e) {
             logger.error("出现错误 {}", e);
-            return false;
+            return ApiResponse.of(400, false, e.getMessage());
         } finally {
             sourceDriver.close();
             targetDriver.close();

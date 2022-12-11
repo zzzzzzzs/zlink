@@ -35,44 +35,16 @@
           </el-row>
         </el-col>
         <el-col :span="4">
-          <el-button @click="drawer = true" type="primary" style="margin-left: 16px;">同步配置</el-button>
-          <el-button @click="test" type="primary" style="margin-left: 16px;">创建表结构</el-button>
-          <el-button @click="localFlinkCDC" type="primary" style="margin-left: 16px;">本地flinkcdc</el-button>
-          <el-button @click="getThreadName" type="primary" style="margin-left: 16px;">获取线程</el-button>
+          <el-button @click="syncTableStruct" type="primary" style="margin-left: 16px;">创建表结构</el-button>
         </el-col>
         <el-col :span="10">
           <div class="grid-content bg-purple">
             目标数据库
-            <!--<el-select v-model="targetId" filterable placeholder="请选择">-->
-            <!--  <el-option-->
-            <!--    v-for="item in dataSourceList"-->
-            <!--    :key="item.id"-->
-            <!--    :label="item.databaseName"-->
-            <!--    :value="item.id">-->
-            <!--  </el-option>-->
-            <!--</el-select>-->
             <el-cascader :options="options" :props="casProps" @change="handleChange"></el-cascader>
           </div>
         </el-col>
       </el-row>
     </el-card>
-
-
-    <el-drawer
-      title="添加同步配置"
-      :visible.sync="drawer"
-      direction="ltr"
-      size="45%"
-    >
-      <el-card>
-        <!-- 步骤条区域 -->
-        <!--<el-steps :space="200" :active="activeIndex - 0" finish-status="success" align-center>-->
-        <!--  <el-step title="基本信息"></el-step>-->
-        <!--</el-steps>-->
-        <el-button style="margin-top: 12px;" @click="stepNext">下一步</el-button>
-      </el-card>
-    </el-drawer>
-
 
   </div>
 </template>
@@ -108,8 +80,6 @@ export default {
           resolve(nodes);
         }
       },
-      activeIndex: 0,
-      drawer: false,
       filterText: '',
       dataSourceList: [],
       sourceId: '',
@@ -131,9 +101,6 @@ export default {
     this.getDataSourceList()
   },
   methods: {
-    async getThreadName() {
-      const {data: res} = await this.$http.get('metadata/getThreadName')
-    },
     async localFlinkCDC() {
       const {data: res} = await this.$http.post('metadata/localFlinkCDC', {
         'sourceId': this.sourceId,
@@ -163,8 +130,8 @@ export default {
         console.log(res)
       }
     },
-    // 创建表结构
-    async test() {
+    // 同步表结构
+    async syncTableStruct() {
       if (this.targetData.targetId === "") {
         return this.$message.error("未选择目标数据库")
       }
@@ -173,6 +140,9 @@ export default {
         'targetData': this.targetData,
         'tables': this.$refs.tree.getCheckedNodes(true)
       })
+      console.log(res)
+      if (res.code !== 200) return this.$message.error('同步表结构失败，失败信息 : ' + res.message);
+      return this.$message.success('同步表结构成功！')
     },
     async getDataSourceList() {
       const {data: res} = await this.$http.get('datasource/listDataSource')
@@ -200,13 +170,6 @@ export default {
     filterNode(value, metaDataList) {
       if (!value) return true;
       return metaDataList.name.indexOf(value) !== -1;
-    },
-    stepNext() {
-      // if (this.activeIndex++ > 1) {
-      //   this.activeIndex = 0
-      //   this.drawer = false
-      // }
-      console.log('asdasda')
     },
   }
 }
