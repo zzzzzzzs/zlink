@@ -1,11 +1,13 @@
 package com.zlink.controller;
 
+import com.zlink.cdc.FlinkInfo;
 import com.zlink.common.utils.JacksonObject;
 import com.zlink.model.ApiResponse;
 import com.zlink.service.FlinkcdcService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 /**
@@ -33,6 +35,14 @@ public class FlinkcdcController {
     @RequestMapping(value = "/getLocalFlinkInfo", method = RequestMethod.GET)
     public ApiResponse getFlinkInfo() throws ExecutionException, InterruptedException {
         return ApiResponse.ofSuccess(flinkcdcService.getLocalFlinkInfo());
+    }
+
+    /**
+     * stop flink task
+     */
+    @RequestMapping(value = "/stopFlinkTask", method = RequestMethod.POST)
+    public ApiResponse stopFlinkTask(@RequestBody List<FlinkInfo> infos) {
+        return ApiResponse.ofSuccess(flinkcdcService.stopFlinkTask(infos));
     }
 
 }

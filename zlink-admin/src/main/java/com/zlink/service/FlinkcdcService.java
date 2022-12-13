@@ -3,7 +3,7 @@ package com.zlink.service;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.zlink.cdc.FlinkCDCConfig;
-import com.zlink.cdc.FlinkLocalInfo;
+import com.zlink.cdc.FlinkInfo;
 import com.zlink.cdc.mysql.MysqlCDCBuilder;
 import com.zlink.common.model.Table;
 import com.zlink.common.utils.JacksonObject;
@@ -12,6 +12,7 @@ import com.zlink.dao.DatasourceMapper;
 import com.zlink.entity.JobJdbcDatasource;
 import com.zlink.metadata.driver.Driver;
 import lombok.RequiredArgsConstructor;
+import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.core.execution.JobClient;
 import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
@@ -36,7 +37,7 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
     private final DatasourceService datasourceService;
 
     // jobId, TableResult
-    private Map<String, FlinkLocalInfo> flinkInfoMap = new LinkedHashMap<>();
+    private Map<String, FlinkInfo> flinkInfoMap = new LinkedHashMap<>();
 
 
     public boolean localFlinkCDC(JacksonObject json) throws ExecutionException, InterruptedException {
@@ -101,8 +102,9 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
                 Optional<JobClient> transClient = transResult.getJobClient();
                 if (!transClient.isEmpty()) {
                     JobClient jobClient = transClient.get();
-                    FlinkLocalInfo flinkLocalInfo = FlinkLocalInfo.builder()
+                    FlinkInfo flinkLocalInfo = FlinkInfo.builder()
                             .jobId(jobClient.getJobID().toHexString())
+                            .model("local")
                             .url("localhost:" + port)
                             .jobClient(jobClient)
                             .status(jobClient.getJobStatus().get().name())
@@ -117,11 +119,20 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
         return true;
     }
 
-    public List<FlinkLocalInfo> getLocalFlinkInfo() throws ExecutionException, InterruptedException {
-        for (Map.Entry<String, FlinkLocalInfo> entry : flinkInfoMap.entrySet()) {
-            FlinkLocalInfo value = entry.getValue();
+    public List<FlinkInfo> getLocalFlinkInfo() throws ExecutionException, InterruptedException {
+        for (Map.Entry<String, FlinkInfo> entry : flinkInfoMap.entrySet()) {
+            FlinkInfo value = entry.getValue();
             value.setStatus(value.getJobClient().getJobStatus().get().name());
         }
         return flinkInfoMap.values().stream().collect(Collectors.toList());
+    }
+
+    public boolean stopFlinkTask(List<FlinkInfo> infos) {
+        for (FlinkInfo info : infos) {
+            JobClient client = flinkInfoMap.get(info.getJobId()).getJobClient();
+            client.cancel();
+            flinkInfoMap.remove(info.getJobId());
+        }
+        return true;
     }
 }

@@ -60,8 +60,7 @@
           </el-row>
         </el-col>
         <el-col :span="4">
-          <el-button @click="localFlinkCDC" type="primary" style="margin-left: 16px;">local-cdc</el-button>
-          <el-button @click="getLocalFlinkInfo" type="primary" style="margin-left: 16px;">local-cdc-info</el-button>
+          <el-button @click="localFlinkCDC" type="primary" style="margin-left: 16px;">生成 cdc 任务</el-button>
         </el-col>
         <el-col :span="5">
           源端数据库表
@@ -90,20 +89,6 @@
           </div>
         </el-col>
       </el-row>
-    </el-card>
-
-    <el-card>
-      local-cdc 信息
-      <el-table :data='flinkInfos' border stripe>
-        <el-table-column label='编号' type='index'></el-table-column>
-        <el-table-column label='jobId' prop='jobId'></el-table-column>
-        <el-table-column label='url'>
-          <template slot-scope="scope">
-            <a :href="'http://'+scope.row.url+'/#/overview'" target="_blank">flink-web</a>
-          </template>
-        </el-table-column>
-        <el-table-column label='任务状态' prop='status'></el-table-column>
-      </el-table>
     </el-card>
 
   </div>
@@ -153,14 +138,6 @@ export default {
     this.getDataSourceList()
   },
   methods: {
-    async getLocalFlinkInfo() {
-      const {data: res} = await this.$http.get('cdc/getLocalFlinkInfo')
-      console.log(res)
-      if (res.code !== 200) return this.$message.error("获取 flink info 失败！")
-      this.$message.success("获取 flink info 成功！")
-      this.flinkInfos = res.data
-      console.log(this.flinkInfos)
-    },
     async localFlinkCDC() {
       if (this.sourceArr.length == 0) return this.$message.error("源端数据库表不能为空")
       if (this.targetArr.length == 0) return this.$message.error("目标数据库表不能为空")
@@ -189,6 +166,8 @@ export default {
 
       console.log(para)
       const {data: res} = await this.$http.post('cdc/localFlinkCDC', para)
+      if (res.code !== 200) return this.$message.error('生成失败')
+      return this.$message.success("生成 flink 任务成功")
     }
     ,
     sourceHandleCheckChange(data, checked) {

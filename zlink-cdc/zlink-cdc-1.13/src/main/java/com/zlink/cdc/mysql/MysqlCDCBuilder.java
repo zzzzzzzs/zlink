@@ -41,7 +41,7 @@ public class MysqlCDCBuilder {
         StringBuilder sb = new StringBuilder();
         sb
                 .append("CREATE TABLE ")
-                .append(config.getSourceTable().getName()).append(" (").append("\n")
+                .append(config.getSourceTable().getName()).append("_source").append(" (").append("\n")
         ;
         Table table = config.getSourceTable();
         for (Column column : table.getColumns()) {
@@ -54,7 +54,7 @@ public class MysqlCDCBuilder {
                 .append(" 'port' = '").append(config.getSourcePort()).append("',\n")
                 .append(" 'username' = '").append(config.getSourceUsername()).append("',\n")
                 .append(" 'password' = '").append(config.getSourcePassword()).append("',\n")
-                .append(" 'database-name' = '").append(config.getSinkTable().getSchema()).append("',\n")
+                .append(" 'database-name' = '").append(config.getSourceTable().getSchema()).append("',\n")
                 .append(" 'table-name' = '").append(config.getSourceTable().getName()).append("',\n")
                 .append(" 'scan.startup.mode' = '").append(config.getStartupMode()).append("',\n")
                 .append(")")
@@ -69,7 +69,7 @@ public class MysqlCDCBuilder {
         StringBuilder sb = new StringBuilder();
         sb
                 .append("CREATE TABLE ")
-                .append(config.getSinkTable().getName()).append(" (").append("\n")
+                .append(config.getSinkTable().getName()).append("_sink").append(" (").append("\n")
         ;
         Table table = config.getSinkTable();
         for (Column column : table.getColumns()) {
@@ -81,7 +81,7 @@ public class MysqlCDCBuilder {
                 .append(" 'driver' = '").append(config.getSinkDriverClass()).append("',\n")
                 .append(" 'url' = '").append(url).append("',\n")
                 .append(" 'username' = '").append(config.getSinkUsername()).append("',\n")
-                .append(" 'password' = '").append(config.getSourcePassword()).append("',\n")
+                .append(" 'password' = '").append(config.getSinkPassWord()).append("',\n")
                 .append(" 'table-name' = '").append(config.getSinkTable().getName()).append("',\n")
                 .append(")")
         ;
@@ -94,9 +94,9 @@ public class MysqlCDCBuilder {
         StringBuilder sb = new StringBuilder();
         sb
                 .append("insert into ")
-                .append(config.getSinkTable().getName())
+                .append(config.getSinkTable().getName()).append("_sink")
                 .append(" select * from ")
-                .append(config.getSourceTable().getName())
+                .append(config.getSourceTable().getName()).append("_source")
         ;
         return sb.toString();
     }

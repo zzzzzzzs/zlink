@@ -12,10 +12,12 @@ import org.apache.flink.core.execution.JobClient;
  */
 @Data
 @Builder
-public class FlinkLocalInfo {
+public class FlinkInfo {
     private String jobId;
     @JsonIgnore
     private JobClient jobClient;
+    // 执行模式：local, yarn, session, k8s
+    private String model;
     private String url;
     // run, stop
     private String status;
