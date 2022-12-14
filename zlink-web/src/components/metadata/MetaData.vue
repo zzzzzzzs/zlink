@@ -35,7 +35,9 @@
           </el-row>
         </el-col>
         <el-col :span="4">
-          <el-button @click="syncTableStruct" type="primary" style="margin-left: 16px;">创建表结构</el-button>
+          <!--<el-button @click="syncTableStruct" type="primary" style="margin-left: 16px;">创建表结构</el-button>-->
+          <el-button @click="showSyncStructDialog = true" type="primary" style="margin-left: 16px;">创建表结构
+          </el-button>
         </el-col>
         <el-col :span="10">
           <div class="grid-content bg-purple">
@@ -45,6 +47,22 @@
         </el-col>
       </el-row>
     </el-card>
+
+    <!-- 表结构同步信息对话框 -->
+    <el-dialog title="表结构同步" :visible.sync="showSyncStructDialog" width="50%">
+      <!-- 添加分类的表单 -->
+      <el-form :model="syncTableInfo" label-width="80px">
+        <el-form-item label="表前缀：" prop="tablePrefix">
+          <el-input v-model="syncTableInfo.tablePrefix"></el-input>
+        </el-form-item>
+        <el-form-item label="表后缀：" prop="tableSuffix">
+          <el-input v-model="syncTableInfo.tableSuffix"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="syncTableStruct">开始同步表结构</el-button>
+      </span>
+    </el-dialog>
 
   </div>
 </template>
@@ -60,6 +78,12 @@ export default {
   },
   data() {
     return {
+      // 同步表结构信息
+      syncTableInfo: {
+        tablePrefix: '', // 表前缀
+        tableSuffix: '' // 表后缀
+      },
+      showSyncStructDialog: false,
       options: [],
       casProps: {
         lazy: true, // 此处必须为true
@@ -135,10 +159,14 @@ export default {
       if (this.targetData.targetId === "") {
         return this.$message.error("未选择目标数据库")
       }
+      // 关闭对话框
+      this.showSyncStructDialog = false;
+      console.log(this.syncTableInfo)
       const {data: res} = await this.$http.post('metadata/syncTableStruct', {
         'sourceId': this.sourceId,
         'targetData': this.targetData,
-        'tables': this.$refs.tree.getCheckedNodes(true)
+        'tables': this.$refs.tree.getCheckedNodes(true),
+        'syncTableInfo': this.syncTableInfo
       })
       console.log(res)
       if (res.code !== 200) return this.$message.error('同步表结构失败，失败信息 : ' + res.message);

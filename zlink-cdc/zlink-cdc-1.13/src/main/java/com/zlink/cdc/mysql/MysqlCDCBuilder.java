@@ -45,7 +45,7 @@ public class MysqlCDCBuilder {
         ;
         Table table = config.getSourceTable();
         for (Column column : table.getColumns()) {
-            sb.append(column.getName()).append(" ").append(column.getFlinkType().getType()).append(",\n");
+            sb.append("`").append(column.getName()).append("`").append(" ").append(column.getFlinkType().getType()).append(",\n");
         }
         sb.append("primary key (id) not enforced\n");
         sb.append(") with ( \n")
@@ -73,7 +73,7 @@ public class MysqlCDCBuilder {
         ;
         Table table = config.getSinkTable();
         for (Column column : table.getColumns()) {
-            sb.append(column.getName()).append(" ").append(column.getFlinkType().getType()).append(",\n");
+            sb.append("`").append(column.getName()).append("`").append(" ").append(column.getFlinkType().getType()).append(",\n");
         }
         sb.append("primary key (id) not enforced\n");
         sb.append(") with ( \n")

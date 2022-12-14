@@ -4,6 +4,7 @@ import com.google.common.base.Preconditions;
 import com.zlink.common.exception.MetaDataException;
 import com.zlink.common.model.Column;
 import com.zlink.common.model.Schema;
+import com.zlink.common.model.SyncTableInfo;
 import com.zlink.common.model.Table;
 import com.zlink.metadata.query.IDBQuery;
 
@@ -74,7 +75,7 @@ public interface Driver extends AutoCloseable {
 
     List<Column> listColumns(String schemaName, String tableName);
 
-    String generateCreateTableSql(Table table, String targetSchema);
+    String generateCreateTableSql(Table table, String targetSchema, SyncTableInfo syncTableInfo);
 
     boolean execute(String sql) throws Exception;
 }

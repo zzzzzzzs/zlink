@@ -304,12 +304,18 @@ public class MySqlDriver extends AbstractDriver {
     }
 
     @Override
-    public String generateCreateTableSql(Table table, String targetSchema) {
+    public String generateCreateTableSql(Table table, String targetSchema, SyncTableInfo syncTableInfo) {
+        syncTableInfo =
+                new SyncTableInfo(syncTableInfo.getTablePrefix().trim().isBlank() == true ? "" : syncTableInfo.getTablePrefix() + "_",
+                        syncTableInfo.getTableSuffix().trim().isBlank() == true ? "" : "_" + syncTableInfo.getTableSuffix());
+
         StringBuilder sb = new StringBuilder();
         sb.append("CREATE TABLE ")
                 .append(targetSchema)
                 .append(".")
-                .append(table.getName()).append(" (\n");
+                .append(syncTableInfo.getTablePrefix())
+                .append(table.getName())
+                .append(syncTableInfo.getTableSuffix()).append(" (\n");
         for (Column column : table.getColumns()) {
             try {
                 sb.append("  `")

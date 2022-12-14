@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.zlink.cdc.mysql.MysqlCDCBuilder;
 import com.zlink.common.model.Column;
 import com.zlink.common.model.Schema;
+import com.zlink.common.model.SyncTableInfo;
 import com.zlink.common.model.Table;
 import com.zlink.common.utils.JacksonObject;
 import com.zlink.dao.DatasourceMapper;
@@ -54,6 +55,8 @@ public class MetaDataService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
         String targetSchema = json.getNode("targetData").get("targetSchema").asText();
         List<Table> tables = json.getObject("tables", new TypeReference<List<Table>>() {
         });
+        SyncTableInfo syncTableInfo = json.getObject("syncTableInfo", new TypeReference<SyncTableInfo>() {
+        });
         // 获取列信息
         JobJdbcDatasource source = getById(sourceId);
         JobJdbcDatasource target = getById(targetId);
@@ -64,7 +67,7 @@ public class MetaDataService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
         // 创建表
         Driver targetDriver = Driver.build(target.getDriverConfig());
         try {
-            List<String> targetCreateTableSqls = tables.stream().map(ele -> targetDriver.generateCreateTableSql(ele, targetSchema)).collect(Collectors.toList());
+            List<String> targetCreateTableSqls = tables.stream().map(ele -> targetDriver.generateCreateTableSql(ele, targetSchema, syncTableInfo)).collect(Collectors.toList());
             for (String sql : targetCreateTableSqls) {
                 targetDriver.execute(sql);
             }
