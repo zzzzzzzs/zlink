@@ -39,7 +39,7 @@
             <appender-ref ref="Console"/>
             <!--一般不使用这个，只是让你知道有这个输出日志文件的方式而已-->
             <!--<appender-ref ref="File"/>-->
-            <appender-ref ref="RollingFile"/>
+<!--            <appender-ref ref="RollingFile"/>-->
         </root>
     </loggers>
 </configuration>

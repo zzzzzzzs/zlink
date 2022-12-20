@@ -39,6 +39,7 @@
         <druid-starter>1.2.8</druid-starter>
         <postgresql.version>42.2.14</postgresql.version>
         <flink.version>1.13.6</flink.version>
+        <jackjson.version>2.13.4</jackjson.version>
     </properties>
 
     <dependencyManagement>
@@ -99,6 +100,16 @@
                 <version>${spring-boot-dependencies.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackjson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackjson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.alibaba</groupId>

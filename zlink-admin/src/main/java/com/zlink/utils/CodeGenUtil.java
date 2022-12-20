@@ -69,7 +69,7 @@ public class CodeGenUtil {
         config.setControllerMappingHyphenStyle(true);
         config.setTablePrefix(pc.getModuleName() + "_");
 //        config.setTablePrefix("wx_");
-        config.setInclude(new String[]{"job_sys_menus"});
+        config.setInclude(new String[]{"job_flink_model"});
         mpg.setStrategy(config);
 
         mpg.setPackageInfo(pc);

@@ -24,28 +24,46 @@
           :collapse-transition='false'
           router
           :default-active='activePath'>
-          <!-- 一级菜单, 每一个 v-for 都尽量绑定一个唯一的 key 属性-->
-          <el-menu-item :index="'/'+item.path" v-for='item in menulist' :key='item.id'
-                        @click="saveNavState('/'+ item.path)">
-            <!-- 一级菜单的模板区-->
-            <template slot='title'>
-              <!-- 图标-->
-              <i :class='iconsDict[item.id]'></i>
-              <!-- 文本-->
-              <span>{{ item.name }}</span>
-            </template>
-            <!-- 二级菜单, 开启路由模式使用 index 配置路由-->
-            <!--<el-menu-item :index="'/'+ subItem.path" v-for='subItem in item.children' :key='subItem.id'-->
-            <!--              @click="saveNavState('/'+ subItem.path)">-->
-            <!--  &lt;!&ndash; 一级菜单的模板区&ndash;&gt;-->
-            <!--  <template slot='title'>-->
-            <!--    &lt;!&ndash; 图标&ndash;&gt;-->
-            <!--    <i class='el-icon-menu'></i>-->
-            <!--    &lt;!&ndash; 文本&ndash;&gt;-->
-            <!--    <span>{{ subItem.authName }}</span>-->
-            <!--  </template>-->
-            <!--</el-menu-item>-->
-          </el-menu-item>
+          <!-- TODO 一级菜单也可以点击-->
+          <div v-for="item in menulist" :key="item.id">
+            <el-menu-item :index="'/'+item.path"
+                          :key='item.id'
+                          v-if="item.children == null"
+                          @click="saveNavState('/'+ item.path)">
+              <!-- 一级菜单的模板区-->
+              <template slot='title'>
+                <!-- 图标-->
+                <i :class='iconsDict[item.id]'></i>
+                <!-- 文本-->
+                <span>{{ item.name }}</span>
+              </template>
+            </el-menu-item>
+
+            <!--显示二级菜单-->
+            <el-submenu :index="item.id + ''"
+                        :key='item.id'
+                        v-else>
+              <!-- 一级菜单的模板区-->
+              <template slot='title'>
+                <!-- 图标-->
+                <i :class='iconsDict[item.id]'></i>
+                <!-- 文本-->
+                <span>{{ item.name }}</span>
+              </template>
+              <!-- 二级菜单, 开启路由模式使用 index 配置路由-->
+              <el-menu-item :index="'/'+ subItem.path" v-for='subItem in item.children' :key='subItem.id'
+                            @click="saveNavState('/'+ subItem.path)"
+              >
+                <!-- 一级菜单的模板区-->
+                <template slot='title'>
+                  <!-- 图标-->
+                  <i class='el-icon-menu'></i>
+                  <!-- 文本-->
+                  <span>{{ subItem.name }}</span>
+                </template>
+              </el-menu-item>
+            </el-submenu>
+          </div>
         </el-menu>
       </el-aside>
       <!-- 右侧内容主题-->
@@ -98,7 +116,7 @@ export default {
       const {data: res} = await this.$http.get('menus/listMenus')
       if (res.code !== 200) return this.$message.error(res.meta.msg)
       this.menulist = res.data
-      console.log(this.menulist)
+      console.log('菜单', this.menulist)
     },
     // 点击按钮, 切换
     toggleCollapse() {

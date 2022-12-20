@@ -31,8 +31,8 @@
           class="item"
           effect="dark"
           placement="top">
-          <div slot="content">推送任务<br/>目前支持 local, yarn, session, k8s</div>
-          <el-button type="success" icon="el-icon-s-promotion" circle></el-button>
+          <div slot="content">推送任务<br/>目前支持 {{ pushModel.toString() }}</div>
+          <el-button type="success" icon="el-icon-s-promotion" circle @click="pushTaskVisible=true"></el-button>
         </el-tooltip>
 
       </el-row>
@@ -41,7 +41,6 @@
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column label='jobId' prop='jobId'></el-table-column>
         <el-table-column label='模式' prop='model'>
-
           <template slot="header">
             <el-tooltip
               class="item"
@@ -77,6 +76,32 @@
       </el-table>
     </el-card>
 
+    <el-dialog title='推送任务' :visible.sync="pushTaskVisible" width="50%"
+               @close="pushTaskClosed">
+      <!-- 添加数据源表单 -->
+      <el-form :model="pushTaskForm" ref="pushTaskFormRef"
+               label-width="140px">
+        <el-form-item label="推送模式：">
+          <el-select v-model="pushModel.model" placeholder="请选择" @change="selectBtn">
+            <el-option
+              v-for="item in pushModel"
+              :key="item"
+              :label="item"
+              :value="item"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="并行度：">
+          <el-input v-model="pushTaskForm.parallelism"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="pushTaskVisible = false">取 消</el-button>
+        <el-button type="primary" @click="pushTask">推 送</el-button>
+      </span>
+    </el-dialog>
+
   </div>
 </template>
 
@@ -88,15 +113,50 @@ export default {
   watch: {},
   data() {
     return {
+      flinkModel: [],
+      pushModel: [],
+      pushTaskForm: {
+        model: '',
+        parallelism: '',
+        jobIds: [],
+      },
+      pushTaskVisible: false,
       multipleSelection: [],
       flinkInfos: [],
     }
   },
   // 刚进入界面首先调用这里的函数
   created() {
+    this.listFlinkModel()
     this.getLocalFlinkInfo()
   },
   methods: {
+    async listFlinkModel() {
+      const {data: res} = await this.$http.get('flink-model/listFlinkModel')
+      if (res.code !== 200) return this.$message.error("获取 flink model 失败！")
+      this.$message.success("获取 flink model 成功！")
+      // console.log(res.data)
+      this.flinkModel = res.data
+      console.log(this.flinkModel)
+      this.flinkModel.map(it => {
+        this.pushModel.push(it.flinkModel)
+      })
+    },
+    pushTask() {
+      this.multipleSelection.map(it => {
+        this.pushTaskForm.jobIds.push(it.jobId)
+        // this.pushModel.push(it.flinkModel)
+      })
+      console.log(this.pushTaskForm)
+    },
+    pushTaskClosed() {
+
+    },
+    selectBtn(value) {
+      this.pushModel.forEach(item => {
+        if (item === value) this.pushTaskForm.model = item
+      })
+    },
     handleSelectionChange(val) {
       this.multipleSelection = val;
     },

@@ -25,7 +25,6 @@
         <dependency>
             <groupId>com.zlink</groupId>
             <artifactId>zlink-flink-1.13</artifactId>
-            <scope>provided</scope>
         </dependency>
     </dependencies>
 

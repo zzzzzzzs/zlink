@@ -73,7 +73,7 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
                 Table sourceTable = srouceTables.get(i);
                 Table targetTable = targetTables.get(i);
                 int port = NetUtils.getAvailablePort();
-                StreamTableEnvironment tableEnv = MysqlCDCBuilder.create(port);
+                StreamTableEnvironment tableEnv = MysqlCDCBuilder.create(true, port);
                 FlinkCDCConfig config = FlinkCDCConfig.builder()
                         .startupMode("initial")
                         .parallelism(1)

@@ -3,7 +3,6 @@ package com.zlink.cdc.mysql;
 import com.zlink.cdc.FlinkCDCConfig;
 import com.zlink.common.model.Column;
 import com.zlink.common.model.Table;
-import com.zlink.common.utils.NetUtils;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.RestOptions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -22,7 +21,18 @@ public class MysqlCDCBuilder {
     private static Logger logger = LoggerFactory.getLogger(MysqlCDCBuilder.class);
 
 
-    public static StreamTableEnvironment create(int port) {
+    /**
+     * @author: zs
+     * @Description
+     * @Date 2022/12/16
+     * @Param remote
+     * @param: port
+     * @return
+     **/
+    public static StreamTableEnvironment create(boolean remote,int port) {
+        if (remote == true) {
+
+        }
         Configuration conf = new Configuration();
         conf.setInteger(RestOptions.PORT, port);
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
@@ -102,16 +112,15 @@ public class MysqlCDCBuilder {
     }
 
     public static void main(String[] args) {
-        Configuration conf = new Configuration();
-        conf.setInteger(RestOptions.PORT, NetUtils.getAvailablePort());
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment("localhost", 8081);
+//        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
         EnvironmentSettings settings = EnvironmentSettings.newInstance()
                 .useBlinkPlanner()
                 .inStreamingMode()
                 .build();
         StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env, settings);
-        tableEnv.getConfig().setSqlDialect(SqlDialect.DEFAULT);
+//        tableEnv.getConfig().setSqlDialect(SqlDialect.DEFAULT);
         String sourceDDL =
                 "CREATE TABLE aaa (\n" +
                         " id INT,\n" +
@@ -144,8 +153,9 @@ public class MysqlCDCBuilder {
         // 简单的聚合处理
         String transformDmlSQL = "insert into bbb select * from aaa";
 
-        tableEnv.executeSql(sourceDDL);
-        tableEnv.executeSql(sinkDDL);
-        tableEnv.executeSql(transformDmlSQL);
+
+        tableEnv.executeSql(sourceDDL).print();
+        tableEnv.executeSql(sinkDDL).print();
+        tableEnv.executeSql(transformDmlSQL).print();
     }
 }
