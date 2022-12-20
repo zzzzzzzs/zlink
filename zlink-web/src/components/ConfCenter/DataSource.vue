@@ -3,7 +3,7 @@
     <!-- 面包屑导航区域-->
     <el-breadcrumb separator-class='el-icon-arrow-right'>
       <el-breadcrumb-item :to="{ path: '/home' }">首页</el-breadcrumb-item>
-      <el-breadcrumb-item>数据源中心</el-breadcrumb-item>
+      <el-breadcrumb-item>配置中心</el-breadcrumb-item>
       <el-breadcrumb-item>数据源中心</el-breadcrumb-item>
     </el-breadcrumb>
 

@@ -33,7 +33,7 @@ public class JobFlinkModel {
     private Integer id;
 
     /**
-     * 数据源类型
+     * 集群模式
      */
     @TableField("flink_model")
     private String flinkModel;

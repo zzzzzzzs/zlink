@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zlink.dao.FlinkConfMapper">
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="com.zlink.entity.JobFlinkConf">
+        <id column="id" property="id"/>
+        <result column="model" property="model"/>
+        <result column="ip" property="ip"/>
+        <result column="port" property="port"/>
+        <result column="create_time" property="createTime"/>
+        <result column="update_time" property="updateTime"/>
+    </resultMap>
+
+    <select id="pageFlinkConf" resultType="com.zlink.entity.JobFlinkConf">
+        select id,
+        name,
+        model,
+        ip,
+        port
+        from job_flink_conf
+        where 1 = 1
+        <if test="param.id != null">
+            and id = #{param.id}
+        </if>
+        order by id
+    </select>
+</mapper>

@@ -7,8 +7,9 @@ const Login = () => import(/* webpackChunkName: "login_home_welcome" */ '../comp
 const Home = () => import(/* webpackChunkName: "login_home_welcome" */ '../components/Home')
 // import Welcome from '../components/Welcome'
 const Welcome = () => import(/* webpackChunkName: "login_home_welcome" */ '../components/Welcome')
-// import DataSource from "@/components/datasource/DataSource";
-const DataSource = () => import(/* webpackChunkName: "Data_Source" */ '../components/datasource/DataSource')
+// import DataSource from "@/components/ConfCenter/DataSource";
+const DataSource = () => import(/* webpackChunkName: "Data_Source" */ '../components/ConfCenter/DataSource')
+const FlinkConf = () => import(/* webpackChunkName: "Flink_Conf" */ '../components/ConfCenter/FlinkConf')
 const MetaData = () => import(/* webpackChunkName: "Meta_Data" */ '../components/metadata/MetaData')
 const Cdc = () => import(/* webpackChunkName: "Cdc" */ '../components/cdc/Cdc')
 const FlinkTask = () => import(/* webpackChunkName: "FlinkTask" */ '../components/flinktask/FlinkTask')
@@ -31,6 +32,7 @@ const routes = [
     children: [
       {path: '/welcome', component: Welcome},
       {path: '/datasource', component: DataSource},
+      {path: '/flinkconf', component: FlinkConf},
       {path: '/metadata', component: MetaData},
       {path: '/cdc', component: Cdc},
       {path: '/flinktask', component: FlinkTask},

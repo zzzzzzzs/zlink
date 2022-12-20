@@ -38,9 +38,7 @@ public class CodeGenUtil {
         // XML columList
         gc.setBaseColumnList(false);
 
-
         mpg.setGlobalConfig(gc);
-
 
         // 数据源配置
         DataSourceConfig dsc = new DataSourceConfig();
@@ -69,7 +67,7 @@ public class CodeGenUtil {
         config.setControllerMappingHyphenStyle(true);
         config.setTablePrefix(pc.getModuleName() + "_");
 //        config.setTablePrefix("wx_");
-        config.setInclude(new String[]{"job_flink_model"});
+        config.setInclude(new String[]{"job_flink_conf"});
         mpg.setStrategy(config);
 
         mpg.setPackageInfo(pc);
