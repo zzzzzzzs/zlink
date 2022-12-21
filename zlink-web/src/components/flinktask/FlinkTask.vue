@@ -81,13 +81,13 @@
       <!-- 添加数据源表单 -->
       <el-form :model="pushTaskForm" ref="pushTaskFormRef"
                label-width="140px">
-        <el-form-item label="推送模式：">
-          <el-select v-model="pushModel.model" placeholder="请选择" @change="selectBtn">
+        <el-form-item label="推送集群：">
+          <el-select v-model="pushTaskForm.clusterId" placeholder="请选择" @change="selectBtn">
             <el-option
-              v-for="item in pushModel"
-              :key="item"
-              :label="item"
-              :value="item"
+              v-for="item in flinkConfList"
+              :key="item.name"
+              :label="item.name"
+              :value="item.id"
             >
             </el-option>
           </el-select>
@@ -113,10 +113,17 @@ export default {
   watch: {},
   data() {
     return {
+      queryInfo: {
+        // 当前的页
+        pageNo: 1,
+        // 当前每页显示多少条数据
+        pageSize: 100
+      },
+      flinkConfList: [],
       flinkModel: [],
       pushModel: [],
       pushTaskForm: {
-        model: '',
+        clusterId: '',
         parallelism: '',
         jobIds: [],
       },
@@ -129,13 +136,19 @@ export default {
   created() {
     this.listFlinkModel()
     this.getLocalFlinkInfo()
+    this.pageFlinkConf()
   },
   methods: {
+    async pageFlinkConf() {
+      const {data: res} = await this.$http.get('flinkconf/pageFlinkConf', {params: this.queryInfo})
+      if (res.code !== 200) return this.$message.error('获取数据源列表失败！')
+      this.flinkConfList = res.data.records
+      console.log(this.flinkConfList)
+    },
     async listFlinkModel() {
       const {data: res} = await this.$http.get('flink-model/listFlinkModel')
       if (res.code !== 200) return this.$message.error("获取 flink model 失败！")
       this.$message.success("获取 flink model 成功！")
-      // console.log(res.data)
       this.flinkModel = res.data
       console.log(this.flinkModel)
       this.flinkModel.map(it => {
@@ -145,7 +158,6 @@ export default {
     pushTask() {
       this.multipleSelection.map(it => {
         this.pushTaskForm.jobIds.push(it.jobId)
-        // this.pushModel.push(it.flinkModel)
       })
       console.log(this.pushTaskForm)
     },

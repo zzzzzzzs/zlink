@@ -11,6 +11,7 @@ import com.zlink.common.utils.NetUtils;
 import com.zlink.dao.DatasourceMapper;
 import com.zlink.entity.JobJdbcDatasource;
 import com.zlink.metadata.driver.Driver;
+import com.zlink.model.req.FlinkGenInfoReq;
 import lombok.RequiredArgsConstructor;
 import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.core.execution.JobClient;
@@ -40,26 +41,24 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
     private Map<String, FlinkInfo> flinkInfoMap = new LinkedHashMap<>();
 
 
-    public boolean localFlinkCDC(JacksonObject json) throws ExecutionException, InterruptedException {
+    public boolean localFlinkCDC(FlinkGenInfoReq req) throws ExecutionException, InterruptedException {
         try {
-            String sourceId = json.getJacksonObject("source").getString("id");
-            String targetId = json.getJacksonObject("target").getString("id");
+            String sourceId = req.getSourceId();
+            String targetId = req.getTargetId();
 
             JobJdbcDatasource source = datasourceService.getById(sourceId);
             JobJdbcDatasource target = datasourceService.getById(targetId);
 
             // 获取源表信息
             Driver sourceDriver = Driver.build(source.getDriverConfig());
-            List<Table> srouceTables = json.getJacksonObject("source").getObject("sourceArr", new TypeReference<List<Table>>() {
-            });
+            List<Table> srouceTables = req.getSourceTables();
             srouceTables.forEach(ele -> {
                 ele.setColumns(sourceDriver.listColumns(ele.getSchema(), ele.getName()));
             });
 
             // 获取目标表信息
             Driver targetDriver = Driver.build(target.getDriverConfig());
-            List<Table> targetTables = json.getJacksonObject("target").getObject("targetArr", new TypeReference<List<Table>>() {
-            });
+            List<Table> targetTables = req.getTargetTables();
             targetTables.forEach(ele -> {
                 ele.setColumns(targetDriver.listColumns(ele.getSchema(), ele.getName()));
             });
@@ -104,6 +103,8 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
                     JobClient jobClient = transClient.get();
                     FlinkInfo flinkLocalInfo = FlinkInfo.builder()
                             .jobId(jobClient.getJobID().toHexString())
+                            .sourceTable(sourceTable)
+                            .targetTable(targetTable)
                             .model("local")
                             .url("localhost:" + port)
                             .jobClient(jobClient)
@@ -133,6 +134,11 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
             client.cancel();
             flinkInfoMap.remove(info.getJobId());
         }
+        return true;
+    }
+
+    public boolean pushTask(List<FlinkInfo> infos) {
+
         return true;
     }
 }

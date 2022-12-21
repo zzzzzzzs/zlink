@@ -22,20 +22,21 @@ public class MysqlCDCBuilder {
 
 
     /**
+     * @return
      * @author: zs
      * @Description
      * @Date 2022/12/16
      * @Param remote
      * @param: port
-     * @return
      **/
-    public static StreamTableEnvironment create(boolean remote,int port) {
-        if (remote == true) {
-
-        }
+    public static StreamTableEnvironment create(boolean remote, int port) {
         Configuration conf = new Configuration();
         conf.setInteger(RestOptions.PORT, port);
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
+        StreamExecutionEnvironment env = null;
+        if (remote == true) {
+        } else {
+            env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
+        }
         env.setParallelism(1);
         EnvironmentSettings settings = EnvironmentSettings.newInstance()
                 .useBlinkPlanner()

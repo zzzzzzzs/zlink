@@ -153,15 +153,23 @@ export default {
         delete targetJson[i].id
       }
 
+      // const para = {
+      //   "source": {
+      //     "id": this.sourceId,
+      //     "sourceArr": sourceJson
+      //   },
+      //   "target": {
+      //     "id": this.targetId,
+      //     "targetArr": targetJson
+      //   },
+      // }
+
       const para = {
-        "source": {
-          "id": this.sourceId,
-          "sourceArr": sourceJson
-        },
-        "target": {
-          "id": this.targetId,
-          "targetArr": targetJson
-        },
+        "sourceId": this.sourceId,
+        "sourceTables": sourceJson,
+        "targetId": this.targetId,
+        "targetTables": targetJson,
+        "remote": false,
       }
 
       console.log(para)
