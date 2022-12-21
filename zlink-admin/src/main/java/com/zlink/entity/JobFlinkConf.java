@@ -57,7 +57,7 @@ public class JobFlinkConf extends BaseEntity {
      * 端口
      */
     @TableField("port")
-    private String port;
+    private Integer port;
 
     /**
      * System 创建时间

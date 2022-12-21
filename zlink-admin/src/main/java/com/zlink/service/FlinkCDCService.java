@@ -1,19 +1,19 @@
 package com.zlink.service;
 
+import cn.hutool.core.net.NetUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.zlink.cdc.FlinkCDCConfig;
 import com.zlink.cdc.FlinkInfo;
 import com.zlink.cdc.mysql.MysqlCDCBuilder;
 import com.zlink.common.model.Table;
-import com.zlink.common.utils.JacksonObject;
 import com.zlink.common.utils.NetUtils;
 import com.zlink.dao.DatasourceMapper;
+import com.zlink.entity.JobFlinkConf;
 import com.zlink.entity.JobJdbcDatasource;
 import com.zlink.metadata.driver.Driver;
 import com.zlink.model.req.FlinkGenInfoReq;
+import com.zlink.model.req.PushTaskInfoReq;
 import lombok.RequiredArgsConstructor;
-import org.apache.flink.api.common.JobStatus;
 import org.apache.flink.core.execution.JobClient;
 import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
@@ -21,7 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
@@ -31,11 +34,12 @@ import java.util.stream.Collectors;
  */
 @Service
 @RequiredArgsConstructor
-public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDatasource> {
+public class FlinkCDCService extends ServiceImpl<DatasourceMapper, JobJdbcDatasource> {
 
-    private static Logger logger = LoggerFactory.getLogger(FlinkcdcService.class);
+    private static Logger logger = LoggerFactory.getLogger(FlinkCDCService.class);
 
     private final DatasourceService datasourceService;
+    private final FlinkConfService flinkConfService;
 
     // jobId, TableResult
     private Map<String, FlinkInfo> flinkInfoMap = new LinkedHashMap<>();
@@ -52,16 +56,12 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
             // 获取源表信息
             Driver sourceDriver = Driver.build(source.getDriverConfig());
             List<Table> srouceTables = req.getSourceTables();
-            srouceTables.forEach(ele -> {
-                ele.setColumns(sourceDriver.listColumns(ele.getSchema(), ele.getName()));
-            });
+            srouceTables.forEach(ele -> ele.setColumns(sourceDriver.listColumns(ele.getSchema(), ele.getName())));
 
             // 获取目标表信息
             Driver targetDriver = Driver.build(target.getDriverConfig());
             List<Table> targetTables = req.getTargetTables();
-            targetTables.forEach(ele -> {
-                ele.setColumns(targetDriver.listColumns(ele.getSchema(), ele.getName()));
-            });
+            targetTables.forEach(ele -> ele.setColumns(targetDriver.listColumns(ele.getSchema(), ele.getName())));
 
             String[] url = source.getJdbcUrl().split(":");
             String sourceIp = source.getJdbcUrl().split(":")[url.length - 2].split("//")[1];
@@ -71,11 +71,10 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
             for (int i = 0, size = srouceTables.size(); i < size; i++) {
                 Table sourceTable = srouceTables.get(i);
                 Table targetTable = targetTables.get(i);
-                int port = NetUtils.getAvailablePort();
-                StreamTableEnvironment tableEnv = MysqlCDCBuilder.create(true, port);
+                int port = NetUtil.getUsableLocalPort(50000, 65535);
                 FlinkCDCConfig config = FlinkCDCConfig.builder()
                         .startupMode("initial")
-                        .parallelism(1)
+                        .parallelism(req.getParallelism())
                         .sourceHostname(sourceIp)
                         .sourcePort(sourcePort)
                         .sourceUsername(source.getUserName())
@@ -86,28 +85,20 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
                         .sinkUsername(target.getUserName())
                         .sinkPassWord(target.getPassword())
                         .sinkTable(targetTable)
+                        .localPort(port)
+                        .remote(false)
                         .build();
-                String sourceDDL = MysqlCDCBuilder.genFlinkSourceDDL(config);
-                String sinkDDL = MysqlCDCBuilder.genFlinkSinkDDL(config);
-                String transformDDL = MysqlCDCBuilder.genFlinkTransformDDL(config);
-                logger.info("sourceDDL : {}", sourceDDL);
-                logger.info("sinkDDL : {}", sinkDDL);
-                logger.info("transformDDL : {}", transformDDL);
-                tableEnv.executeSql(sourceDDL);
-                tableEnv.executeSql(sinkDDL);
-                TableResult transResult = tableEnv.executeSql(transformDDL);
-
+                TableResult transResult = MysqlCDCBuilder.perTask(config);
                 // 获取客户端信息
                 Optional<JobClient> transClient = transResult.getJobClient();
                 if (!transClient.isEmpty()) {
                     JobClient jobClient = transClient.get();
                     FlinkInfo flinkLocalInfo = FlinkInfo.builder()
                             .jobId(jobClient.getJobID().toHexString())
-                            .sourceTable(sourceTable)
-                            .targetTable(targetTable)
                             .model("local")
                             .url("localhost:" + port)
                             .jobClient(jobClient)
+                            .config(config)
                             .status(jobClient.getJobStatus().get().name())
                             .build();
                     flinkInfoMap.put(jobClient.getJobID().toHexString(), flinkLocalInfo);
@@ -137,8 +128,21 @@ public class FlinkcdcService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
         return true;
     }
 
-    public boolean pushTask(List<FlinkInfo> infos) {
-
+    public boolean pushTask(PushTaskInfoReq req) {
+        JobFlinkConf flinkConf = flinkConfService.getById(req.getClusterId());
+        for (String jobId : req.getJobIds()) {
+            FlinkCDCConfig config = flinkInfoMap.get(jobId).getConfig();
+            config
+                    .setRemote(true)
+                    .setRemoteIp(flinkConf.getIp())
+                    .setRemotePort(flinkConf.getPort())
+                    .setParallelism(req.getParallelism())
+            ;
+            TableResult transResult = MysqlCDCBuilder.perTask(config);
+            JobClient client = flinkInfoMap.get(jobId).getJobClient();
+//            client.cancel();
+//            flinkInfoMap.remove(jobId);
+        }
         return true;
     }
 }

@@ -3,7 +3,8 @@ package com.zlink.controller;
 import com.zlink.cdc.FlinkInfo;
 import com.zlink.model.ApiResponse;
 import com.zlink.model.req.FlinkGenInfoReq;
-import com.zlink.service.FlinkcdcService;
+import com.zlink.model.req.PushTaskInfoReq;
+import com.zlink.service.FlinkCDCService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +20,13 @@ import java.util.concurrent.ExecutionException;
 @RequiredArgsConstructor
 @CrossOrigin
 public class FlinkCDCController {
-    private final FlinkcdcService flinkcdcService;
+    private final FlinkCDCService flinkcdcService;
 
     /**
      * 本地模式 flink cdc
      */
     @RequestMapping(value = "/localFlinkCDC", method = RequestMethod.POST)
-    public ApiResponse localFlinkCDC(@RequestBody FlinkGenInfoReq req) throws ExecutionException, InterruptedException {
+    public ApiResponse flinkCDC(@RequestBody FlinkGenInfoReq req) throws ExecutionException, InterruptedException {
         return ApiResponse.ofSuccess(flinkcdcService.localFlinkCDC(req));
     }
 
@@ -49,8 +50,8 @@ public class FlinkCDCController {
      * push task
      */
     @RequestMapping(value = "/pushTask", method = RequestMethod.POST)
-    public ApiResponse pushTask(@RequestBody List<FlinkInfo> infos) {
-        return ApiResponse.ofSuccess(flinkcdcService.pushTask(infos));
+    public ApiResponse pushTask(@RequestBody PushTaskInfoReq req) {
+        return ApiResponse.ofSuccess(flinkcdcService.pushTask(req));
     }
 
 }

@@ -3,6 +3,7 @@ package com.zlink.cdc;
 import com.zlink.common.model.Table;
 import lombok.Builder;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 /**
  * @author zs
@@ -10,6 +11,7 @@ import lombok.Data;
  */
 @Data
 @Builder
+@Accessors(chain = true)
 public class FlinkCDCConfig {
     private String sourceHostname;
     private Integer sourcePort;
@@ -24,4 +26,10 @@ public class FlinkCDCConfig {
     private String sinkUsername;
     private String sinkPassWord;
     private Table sinkTable;
+
+    private Integer localPort;
+
+    private Boolean remote; // 远程标志
+    private String remoteIp;
+    private Integer remotePort;
 }

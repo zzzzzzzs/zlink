@@ -45,7 +45,7 @@
             <el-tooltip
               class="item"
               effect="dark"
-              content="目前支持 local, yarn, session, k8s"
+              content="目前支持 local, session, yarn, k8s"
               placement="top">
               <span> 模式 <i class="el-icon-question"></i>  </span>
             </el-tooltip>
@@ -124,7 +124,7 @@ export default {
       pushModel: [],
       pushTaskForm: {
         clusterId: '',
-        parallelism: '',
+        parallelism: 1,
         jobIds: [],
       },
       pushTaskVisible: false,
@@ -155,11 +155,16 @@ export default {
         this.pushModel.push(it.flinkModel)
       })
     },
-    pushTask() {
+    async pushTask() {
       this.multipleSelection.map(it => {
         this.pushTaskForm.jobIds.push(it.jobId)
       })
       console.log(this.pushTaskForm)
+      if (this.multipleSelection.length === 0) return this.$message.error("请勾选任务！")
+      const {data: res} = await this.$http.post('cdc/pushTask', this.pushTaskForm)
+
+      this.pushTaskForm.jobIds = []
+      this.pushTaskVisible = false
     },
     pushTaskClosed() {
 

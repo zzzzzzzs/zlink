@@ -12,16 +12,16 @@
 
     <groupId>com.zlink</groupId>
     <artifactId>zlink</artifactId>
-    <version>0.0.1</version>
+    <version>0.1.0</version>
     <packaging>pom</packaging>
 
     <modules>
-        <module>zlink-admin</module>
-        <module>zlink-alert</module>
         <module>zlink-common</module>
         <module>zlink-metadata</module>
-        <module>zlink-cdc</module>
         <module>zlink-flink</module>
+        <module>zlink-cdc</module>
+        <module>zlink-alert</module>
+        <module>zlink-admin</module>
     </modules>
 
     <properties>
@@ -139,6 +139,11 @@
             <dependency>
                 <groupId>com.zlink</groupId>
                 <artifactId>zlink-flink-1.13</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zlink</groupId>
+                <artifactId>zlink-cdc-1.13</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

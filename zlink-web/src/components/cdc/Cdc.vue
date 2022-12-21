@@ -153,17 +153,6 @@ export default {
         delete targetJson[i].id
       }
 
-      // const para = {
-      //   "source": {
-      //     "id": this.sourceId,
-      //     "sourceArr": sourceJson
-      //   },
-      //   "target": {
-      //     "id": this.targetId,
-      //     "targetArr": targetJson
-      //   },
-      // }
-
       const para = {
         "sourceId": this.sourceId,
         "sourceTables": sourceJson,
@@ -176,8 +165,7 @@ export default {
       const {data: res} = await this.$http.post('cdc/localFlinkCDC', para)
       if (res.code !== 200) return this.$message.error('生成失败')
       return this.$message.success("生成 flink 任务成功")
-    }
-    ,
+    },
     sourceHandleCheckChange(data, checked) {
       this.sourceArr = []
       this.$refs.sourceTree.getCheckedNodes(true).forEach(it => {

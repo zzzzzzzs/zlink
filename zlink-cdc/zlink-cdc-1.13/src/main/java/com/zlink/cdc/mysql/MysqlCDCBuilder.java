@@ -3,11 +3,13 @@ package com.zlink.cdc.mysql;
 import com.zlink.cdc.FlinkCDCConfig;
 import com.zlink.common.model.Column;
 import com.zlink.common.model.Table;
+import com.zlink.common.utils.NetUtils;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.RestOptions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.SqlDialect;
+import org.apache.flink.table.api.TableResult;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,15 +31,17 @@ public class MysqlCDCBuilder {
      * @Param remote
      * @param: port
      **/
-    public static StreamTableEnvironment create(boolean remote, int port) {
-        Configuration conf = new Configuration();
-        conf.setInteger(RestOptions.PORT, port);
-        StreamExecutionEnvironment env = null;
-        if (remote == true) {
+    public static StreamTableEnvironment create(FlinkCDCConfig config) {
+        StreamExecutionEnvironment env;
+        if (config.getRemote()) {
+            env = StreamExecutionEnvironment.createRemoteEnvironment(config.getRemoteIp(), config.getRemotePort());
+            env.setParallelism(config.getParallelism());
         } else {
+            Configuration conf = new Configuration();
+            conf.setInteger(RestOptions.PORT, config.getLocalPort());
             env = StreamExecutionEnvironment.getExecutionEnvironment(conf);
+            env.setParallelism(1);
         }
-        env.setParallelism(1);
         EnvironmentSettings settings = EnvironmentSettings.newInstance()
                 .useBlinkPlanner()
                 .inStreamingMode()
@@ -111,6 +115,20 @@ public class MysqlCDCBuilder {
         ;
         return sb.toString();
     }
+
+    public static TableResult perTask(FlinkCDCConfig config) {
+        StreamTableEnvironment tableEnv = create(config);
+        String sourceDDL = genFlinkSourceDDL(config);
+        String sinkDDL = genFlinkSinkDDL(config);
+        String transformDDL = genFlinkTransformDDL(config);
+        logger.info("sourceDDL : {}", sourceDDL);
+        logger.info("sinkDDL : {}", sinkDDL);
+        logger.info("transformDDL : {}", transformDDL);
+        tableEnv.executeSql(sourceDDL);
+        tableEnv.executeSql(sinkDDL);
+        return tableEnv.executeSql(transformDDL);
+    }
+
 
     public static void main(String[] args) {
         StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment("localhost", 8081);
