@@ -16,9 +16,9 @@ import org.slf4j.LoggerFactory;
  * @date 2022/12/11
  * flink local info
  */
-public class CdcRun {
+public class CDCRun {
 
-    private static Logger logger = LoggerFactory.getLogger(CdcRun.class);
+    private static Logger logger = LoggerFactory.getLogger(CDCRun.class);
 
     public static StreamTableEnvironment create(FlinkCDCConfig config) {
         StreamExecutionEnvironment env;
