@@ -111,10 +111,15 @@ public class FlinkCDCService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
         return true;
     }
 
-    public List<FlinkInfo> getLocalFlinkInfo() throws ExecutionException, InterruptedException {
+    public List<FlinkInfo> getLocalFlinkInfo() {
         for (Map.Entry<String, FlinkInfo> entry : flinkInfoMap.entrySet()) {
             FlinkInfo value = entry.getValue();
-            value.setStatus(value.getJobClient().getJobStatus().get().name());
+            try {
+                value.setStatus(value.getJobClient().getJobStatus().get().name());
+            } catch (ExecutionException | InterruptedException | IllegalStateException e) {
+                flinkInfoMap.remove(value.getJobId());
+                logger.error("{} 意外停止，信息为：{}", value.getJobId(), e);
+            }
         }
         return flinkInfoMap.values().stream().collect(Collectors.toList());
     }
@@ -140,8 +145,8 @@ public class FlinkCDCService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
             ;
             TableResult transResult = MysqlCDCBuilder.perTask(config);
             JobClient client = flinkInfoMap.get(jobId).getJobClient();
-//            client.cancel();
-//            flinkInfoMap.remove(jobId);
+            client.cancel();
+            flinkInfoMap.remove(jobId);
         }
         return true;
     }

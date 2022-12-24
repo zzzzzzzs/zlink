@@ -45,7 +45,7 @@
             <el-tooltip
               class="item"
               effect="dark"
-              content="目前支持 local, session, yarn, k8s"
+              content="目前支持 local, standalone, yarn, k8s"
               placement="top">
               <span> 模式 <i class="el-icon-question"></i>  </span>
             </el-tooltip>

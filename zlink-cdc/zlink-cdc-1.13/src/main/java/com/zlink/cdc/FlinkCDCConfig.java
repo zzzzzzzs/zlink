@@ -13,19 +13,23 @@ import lombok.experimental.Accessors;
 @Builder
 @Accessors(chain = true)
 public class FlinkCDCConfig {
+
+    private String sourceDataBaseType; // 数据库类型
     private String sourceHostname;
     private Integer sourcePort;
-    private String startupMode;
     private String sourceUsername;
     private String sourcePassword;
-    private Integer parallelism;
     private Table sourceTable;
 
+    private String sinkDataBaseType; // 数据库类型
     private String sinkDriverClass;
     private String sinkUrl;
     private String sinkUsername;
     private String sinkPassWord;
     private Table sinkTable;
+
+    private String startupMode;
+    private Integer parallelism;
 
     private Integer localPort;
 

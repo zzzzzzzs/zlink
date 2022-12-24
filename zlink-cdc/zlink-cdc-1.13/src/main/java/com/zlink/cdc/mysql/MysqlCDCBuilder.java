@@ -3,7 +3,6 @@ package com.zlink.cdc.mysql;
 import com.zlink.cdc.FlinkCDCConfig;
 import com.zlink.common.model.Column;
 import com.zlink.common.model.Table;
-import com.zlink.common.utils.NetUtils;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.RestOptions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -129,10 +128,10 @@ public class MysqlCDCBuilder {
         return tableEnv.executeSql(transformDDL);
     }
 
-
     public static void main(String[] args) {
-        StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment("localhost", 8081);
-//        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+//        StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment("localhost", 8081);
+//        StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment("118.31.229.87", 8088);
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
         env.setParallelism(1);
         EnvironmentSettings settings = EnvironmentSettings.newInstance()
                 .useBlinkPlanner()
