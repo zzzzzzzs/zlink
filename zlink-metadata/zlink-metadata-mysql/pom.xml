@@ -12,13 +12,16 @@
     <groupId>com.zlink</groupId>
     <artifactId>zlink-metadata-mysql</artifactId>
     <version>0.1.0</version>
+
+    <properties>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+    </properties>
     <dependencies>
         <dependency>
             <groupId>com.zlink</groupId>
             <artifactId>zlink-metadata-base</artifactId>
-            <version>0.1.0</version>
         </dependency>
     </dependencies>
-
 
 </project>

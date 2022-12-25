@@ -70,6 +70,10 @@
         </dependency>
         <dependency>
             <groupId>com.zlink</groupId>
+            <artifactId>zlink-metadata-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zlink</groupId>
             <artifactId>zlink-flink-1.13</artifactId>
         </dependency>
         <dependency>

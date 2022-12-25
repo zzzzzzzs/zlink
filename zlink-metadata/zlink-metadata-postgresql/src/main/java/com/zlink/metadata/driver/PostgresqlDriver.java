@@ -3,7 +3,7 @@ package com.zlink.metadata.driver;
 import com.zlink.common.assertion.Asserts;
 import com.zlink.common.model.*;
 import com.zlink.metadata.query.IDBQuery;
-import com.zlink.metadata.query.MySqlQuery;
+import com.zlink.metadata.query.PostgresqlQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,19 +18,19 @@ import java.util.List;
  * @author zs
  * @date 2022/11/28
  */
-public class MySqlDriver extends AbstractDriver {
+public class PostgresqlDriver extends AbstractDriver {
 
-    private static Logger logger = LoggerFactory.getLogger(MySqlDriver.class);
+    private static Logger logger = LoggerFactory.getLogger(PostgresqlDriver.class);
 
 
     @Override
     public IDBQuery getDBQuery() {
-        return new MySqlQuery();
+        return new PostgresqlQuery();
     }
 
     @Override
     public String getType() {
-        return "mysql";
+        return "postgresql";
     }
 
     @Override
@@ -39,6 +39,7 @@ public class MySqlDriver extends AbstractDriver {
         PreparedStatement preparedStatement = null;
         ResultSet results = null;
         String schemasSql = getDBQuery().schemaAllSql();
+        logger.info("schemasSql is {}", schemasSql);
         try {
             preparedStatement = conn.get().prepareStatement(schemasSql);
             results = preparedStatement.executeQuery();
@@ -115,13 +116,13 @@ public class MySqlDriver extends AbstractDriver {
 
 
     // TODO 后期优化
-    // Java 类型映射
+    // postgresql -> java
     private void mapJavaType(Column column) {
         JavaType javaType = new JavaType();
         switch (column.getDataType()) {
             // 数值相关
-            case "bigint":
-                javaType.setType("java.lang.Long");
+            case "int4":
+                javaType.setType("java.lang.Integer");
                 javaType.setSize(8L);
                 break;
             case "tinyint":
@@ -281,12 +282,13 @@ public class MySqlDriver extends AbstractDriver {
     }
 
 
-    private String mapMysqlType(JavaType javaType) {
+    // java -> postgresql
+    private String mapPostGresqlType(JavaType javaType) {
         switch (javaType.getType()) {
             case "java.lang.Integer":
-                return String.format("int");
+                return String.format("int4");
             case "java.lang.Long":
-                return String.format("bigint");
+                return String.format("int8");
             case "java.lang.Double":
                 return String.format("double(%s, %s)", javaType.getSize(), javaType.getScale());
             case "java.math.BigDecimal":
@@ -310,33 +312,37 @@ public class MySqlDriver extends AbstractDriver {
                         syncTableInfo.getTableSuffix().trim().isBlank() == true ? "" : "_" + syncTableInfo.getTableSuffix());
 
         StringBuilder sb = new StringBuilder();
-        sb.append("CREATE TABLE ")
+        StringBuilder comments = new StringBuilder();
+        sb.append("CREATE TABLE \"")
                 .append(targetSchema)
-                .append(".")
+                .append("\".\"")
                 .append(syncTableInfo.getTablePrefix())
                 .append(table.getName())
                 .append(syncTableInfo.getTableSuffix())
-                .append(" (\n");
+                .append("\" (\r\n");
+
         for (Column column : table.getColumns()) {
-            try {
-                sb.append("  `")
-                        .append(column.getName()).append("`  ")
-                        .append(mapMysqlType(column.getJavaType()));
-                if (Asserts.isAllNotNullString(column.getComment())) {
-                    sb.append(" COMMENT '").append(column.getComment()).append("'");
-                }
-                sb.append(",\r\n");
-            } catch (Exception e) {
-                logger.error("Column {} 出现异常 {}", column, e);
+            sb.append("  \"").append(column.getName()).append("\" ")
+                    .append(mapPostGresqlType(column.getJavaType()))
+            ;
+
+            sb.append(",\r\n");
+            // 字段注释
+            if (Asserts.isNotNullString(column.getComment())) {
+                comments.append("COMMENT ON COLUMN \"").append(targetSchema).append("\".\"")
+                        .append(table.getName()).append("\".\"")
+                        .append(column.getName()).append("\" IS '").append(column.getComment()).append("';\r\n");
             }
         }
         sb.deleteCharAt(sb.length() - 3);
-        sb.append(") ENGINE=InnoDB ");
+
+        // 表注释
         if (Asserts.isNotNullString(table.getComment())) {
-            sb.append(" COMMENT='").append(table.getComment()).append("'");
+            comments.append("COMMENT ON TABLE \"").append(targetSchema).append("\".\"")
+                    .append(table.getName()).append("\" IS '").append(table.getComment()).append("';");
         }
-        sb.append(";");
-        logger.info("mysql auto generateCreateTableSql {}", sb);
+        sb.append(")\r\n;\r\n").append(comments);
+        logger.info("postgresql auto generateCreateTableSql {}", sb);
         return sb.toString();
     }
 }
