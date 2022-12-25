@@ -123,15 +123,15 @@ public class PostgresqlDriver extends AbstractDriver {
             // 数值相关
             case "int4":
                 javaType.setType("java.lang.Integer");
-                javaType.setSize(8L);
+                javaType.setSize(4L);
                 break;
             case "tinyint":
                 javaType.setType("java.lang.Integer");
                 javaType.setSize(4L);
                 break;
-            case "binary":
-                break;
-            case "blob":
+            case "int8":
+                javaType.setType("java.lang.Long");
+                javaType.setSize(8L);
                 break;
             case "decimal":
                 javaType.setType("java.math.BigDecimal");
@@ -143,28 +143,14 @@ public class PostgresqlDriver extends AbstractDriver {
                 javaType.setSize(column.getLength());
                 javaType.setScale(column.getScale());
                 break;
-            case "enum":
-                break;
             case "float":
                 javaType.setType("java.lang.Float");
                 javaType.setSize(column.getLength());
                 javaType.setScale(column.getScale());
                 break;
-            case "int":
-                javaType.setType("java.lang.Integer");
-                javaType.setSize(4L);
-                break;
             case "json":
                 javaType.setType("java.lang.String");
                 javaType.setSize((long) Integer.MAX_VALUE);
-                break;
-            case "longblob":
-                break;
-            case "mediumblob":
-                break;
-            case "mediumtext":
-                break;
-            case "set":
                 break;
             case "smallint":
                 javaType.setType("java.lang.Integer");
@@ -209,15 +195,14 @@ public class PostgresqlDriver extends AbstractDriver {
                 javaType.setSize((long) Integer.MAX_VALUE);
                 break;
             default:
-                javaType.setType("java.lang.String");
-                javaType.setSize(1024L);
-                break;
+                throw new RuntimeException(String.format("Java 不能匹配 postgresql %s 类型", column.getDataType()));
         }
         column.setJavaType(javaType);
     }
 
     // Flink 类型映射
     // https://nightlies.apache.org/flink/flink-docs-release-1.16/docs/dev/table/types/
+    // Java -> flink
     private void mapFlinkType(Column column) {
         FlinkType flinkType = new FlinkType();
         switch (column.getJavaType().getType()) {
@@ -276,7 +261,7 @@ public class PostgresqlDriver extends AbstractDriver {
                 flinkType.setType("INTERVAL YEAR(4) TO MONTH");
                 break;
             default:
-                break;
+                throw new RuntimeException(String.format("flink sql 不能匹配 Java 的 [%s] 类型", column.getJavaType().getType()));
         }
         column.setFlinkType(flinkType);
     }
@@ -301,7 +286,7 @@ public class PostgresqlDriver extends AbstractDriver {
                 }
                 return String.format("varchar(%s)", javaType.getSize());
             default:
-                return String.format("varchar(%s)", 1024);
+                throw new RuntimeException(String.format("java 类型 [%s] 不能匹配 postgresql 类型", javaType.getType()));
         }
     }
 

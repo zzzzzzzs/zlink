@@ -116,6 +116,7 @@ public class MySqlDriver extends AbstractDriver {
 
     // TODO 后期优化
     // Java 类型映射
+    // mysql -> java
     private void mapJavaType(Column column) {
         JavaType javaType = new JavaType();
         switch (column.getDataType()) {
@@ -128,10 +129,6 @@ public class MySqlDriver extends AbstractDriver {
                 javaType.setType("java.lang.Integer");
                 javaType.setSize(4L);
                 break;
-            case "binary":
-                break;
-            case "blob":
-                break;
             case "decimal":
                 javaType.setType("java.math.BigDecimal");
                 javaType.setSize(column.getLength());
@@ -141,8 +138,6 @@ public class MySqlDriver extends AbstractDriver {
                 javaType.setType("java.lang.Double");
                 javaType.setSize(column.getLength());
                 javaType.setScale(column.getScale());
-                break;
-            case "enum":
                 break;
             case "float":
                 javaType.setType("java.lang.Float");
@@ -156,14 +151,6 @@ public class MySqlDriver extends AbstractDriver {
             case "json":
                 javaType.setType("java.lang.String");
                 javaType.setSize((long) Integer.MAX_VALUE);
-                break;
-            case "longblob":
-                break;
-            case "mediumblob":
-                break;
-            case "mediumtext":
-                break;
-            case "set":
                 break;
             case "smallint":
                 javaType.setType("java.lang.Integer");
@@ -208,9 +195,7 @@ public class MySqlDriver extends AbstractDriver {
                 javaType.setSize((long) Integer.MAX_VALUE);
                 break;
             default:
-                javaType.setType("java.lang.String");
-                javaType.setSize(1024L);
-                break;
+                throw new RuntimeException(String.format("Java 不能匹配 MySQL %s 类型", column.getDataType()));
         }
         column.setJavaType(javaType);
     }
@@ -275,12 +260,12 @@ public class MySqlDriver extends AbstractDriver {
                 flinkType.setType("INTERVAL YEAR(4) TO MONTH");
                 break;
             default:
-                break;
+                throw new RuntimeException(String.format("flink sql 不能匹配 Java 的 [%s] 类型", column.getJavaType().getType()));
         }
         column.setFlinkType(flinkType);
     }
 
-
+    // java -> mysql
     private String mapMysqlType(JavaType javaType) {
         switch (javaType.getType()) {
             case "java.lang.Integer":
@@ -299,7 +284,7 @@ public class MySqlDriver extends AbstractDriver {
                 }
                 return String.format("varchar(%s)", javaType.getSize());
             default:
-                return String.format("varchar(%s)", 1024);
+                throw new RuntimeException(String.format("java 类型 [%s] 不能匹配 MySQL 类型", javaType.getType()));
         }
     }
 

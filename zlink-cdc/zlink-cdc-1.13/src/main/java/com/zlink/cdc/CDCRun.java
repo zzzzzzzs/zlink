@@ -1,6 +1,7 @@
 package com.zlink.cdc;
 
 import com.zlink.cdc.mysql.MysqlCDCBuilder;
+import com.zlink.cdc.postgresql.PostgresqlCDCBuilder;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.RestOptions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
@@ -54,21 +55,29 @@ public class CDCRun {
 
     public static TableResult perTask(FlinkCDCConfig config) {
         StreamTableEnvironment tableEnv = create(config);
-        String sourceDDL = null;
-        String sinkDDL = null;
+        String sourceDDL;
+        String sinkDDL;
+        // source
         switch (config.getSourceDataBaseType()) {
             case "mysql":
                 sourceDDL = MysqlCDCBuilder.genFlinkSourceDDL(config);
                 break;
-            default:
+            case "postgresql":
+                sourceDDL = PostgresqlCDCBuilder.genFlinkSourceDDL(config);
                 break;
+            default:
+                throw new RuntimeException("flink sink 不支持 " + config.getSinkDataBaseType());
         }
+        // sink
         switch (config.getSinkDataBaseType()) {
             case "mysql":
                 sinkDDL = MysqlCDCBuilder.genFlinkSinkDDL(config);
                 break;
-            default:
+            case "postgresql":
+                sinkDDL = PostgresqlCDCBuilder.genFlinkSinkDDL(config);
                 break;
+            default:
+                throw new RuntimeException("flink sink 不支持 " + config.getSinkDataBaseType());
         }
         String transformDDL = genFlinkTransformDDL(config);
         logger.info("sourceDDL : {}", sourceDDL);

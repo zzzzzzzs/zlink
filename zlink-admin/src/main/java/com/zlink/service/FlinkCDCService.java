@@ -2,6 +2,7 @@ package com.zlink.service;
 
 import cn.hutool.core.net.NetUtil;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zlink.cdc.CDCRun;
 import com.zlink.cdc.FlinkCDCConfig;
 import com.zlink.cdc.FlinkInfo;
 import com.zlink.cdc.mysql.MysqlCDCBuilder;
@@ -73,22 +74,27 @@ public class FlinkCDCService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
                 Table targetTable = targetTables.get(i);
                 int port = NetUtil.getUsableLocalPort(50000, 65535);
                 FlinkCDCConfig config = FlinkCDCConfig.builder()
-                        .startupMode("initial")
-                        .parallelism(req.getParallelism())
+                        // source
+                        .sourceDataBaseType(source.getDatabaseType())
                         .sourceHostname(sourceIp)
                         .sourcePort(sourcePort)
                         .sourceUsername(source.getUserName())
                         .sourcePassword(source.getPassword())
                         .sourceTable(sourceTable)
+                        // sink
+                        .sinkDataBaseType(target.getDatabaseType())
                         .sinkDriverClass(target.getJdbcDriverClass())
                         .sinkUrl(target.getJdbcUrl())
                         .sinkUsername(target.getUserName())
                         .sinkPassWord(target.getPassword())
                         .sinkTable(targetTable)
+                        // flink conf
+                        .startupMode("initial")
+                        .parallelism(req.getParallelism())
                         .localPort(port)
                         .remote(false)
                         .build();
-                TableResult transResult = MysqlCDCBuilder.perTask(config);
+                TableResult transResult = CDCRun.perTask(config);
                 // 获取客户端信息
                 Optional<JobClient> transClient = transResult.getJobClient();
                 if (!transClient.isEmpty()) {
