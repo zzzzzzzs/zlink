@@ -52,12 +52,21 @@
             </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="ip：">
-          <el-input v-model="addFlinkConfForm.ip"></el-input>
-        </el-form-item>
-        <el-form-item label="port：">
-          <el-input v-model="addFlinkConfForm.port"></el-input>
-        </el-form-item>
+        <div>
+          <div v-if="addFlinkConfForm.model == 'standalone'">
+            <el-form-item label="ip：">
+              <el-input v-model="addFlinkConfForm.ip"></el-input>
+            </el-form-item>
+            <el-form-item label="port：">
+              <el-input v-model="addFlinkConfForm.port"></el-input>
+            </el-form-item>
+          </div>
+          <div v-else-if="addFlinkConfForm.model == 'yarn'">
+            <el-form-item label="yarn 网址：">
+              <el-input v-model="addFlinkConfForm.yarnUrl"></el-input>
+            </el-form-item>
+          </div>
+        </div>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -138,6 +147,7 @@ export default {
       })
       this.pageFlinkConf()
       this.$message.success('保存 flink 配置成功！')
+      this.addFlinkConfDialogVis = false
     },
     addFlinkConfDialogClosed() {
     },
@@ -155,14 +165,16 @@ export default {
     },
     // 测试数据源
     async testIp() {
-      const {data: res} = await this.$http.post('flinkconf/testIp', this.addFlinkConfForm)
-      console.log(res)
-      if (res.data !== true) {
-        this.$message.error('数据源测试连接失败！')
-        return false
+      if(this.addFlinkConfForm.model === 'standalone'){
+        const {data: res} = await this.$http.post('flinkconf/testIp', this.addFlinkConfForm)
+        console.log(res)
+        if (res.data !== true) {
+          this.$message.error('数据源测试连接失败！')
+          return false
+        }
+        this.$message.success('数据源测试连接成功！')
+        return true
       }
-      this.$message.success('数据源测试连接成功！')
-      return true
     },
   }
 }

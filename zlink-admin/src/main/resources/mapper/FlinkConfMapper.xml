@@ -7,6 +7,7 @@
         <result column="model" property="model"/>
         <result column="ip" property="ip"/>
         <result column="port" property="port"/>
+        <result column="yarn_url" property="yarnUrl"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
@@ -16,7 +17,8 @@
         name,
         model,
         ip,
-        port
+        port,
+        yarn_url
         from job_flink_conf
         where 1 = 1
         <if test="param.id != null">

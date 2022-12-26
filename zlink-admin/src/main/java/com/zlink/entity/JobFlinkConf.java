@@ -60,6 +60,12 @@ public class JobFlinkConf extends BaseEntity {
     private Integer port;
 
     /**
+     * yarn 网址
+     */
+    @TableField("yarn_url")
+    private String yarnUrl;
+
+    /**
      * System 创建时间
      */
     @TableField("create_time")

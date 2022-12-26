@@ -61,6 +61,7 @@ public class DeployPerJob {
                 .build();
 
 
+
         JobGraph jobGraph = PackagedProgramUtils.createJobGraph(packagedProgram, configuration, 1, true);
         System.out.println(jobGraph);
         deployJobGraphInternal(jobGraph, packagedProgram.getUserCodeClassLoader());

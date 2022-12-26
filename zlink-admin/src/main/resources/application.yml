@@ -10,9 +10,9 @@ spring:
   application:
     name: ZLink
   datasource:
-    username: root
-    password: 123456
-    url: jdbc:mysql://192.168.52.154:3306/zlink
+    username: zlink_user
+    password: $m!hQ!X&j%nZa#KnB
+    url: jdbc:mysql://172.16.5.164:3306/zlink
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis-plus:

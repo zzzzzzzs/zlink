@@ -149,7 +149,8 @@ public class FlinkCDCService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
                     .setRemotePort(flinkConf.getPort())
                     .setParallelism(req.getParallelism())
             ;
-            TableResult transResult = MysqlCDCBuilder.perTask(config);
+            TableResult transResult = CDCRun.perTask(config);
+            // 停止本地任务
             JobClient client = flinkInfoMap.get(jobId).getJobClient();
             client.cancel();
             flinkInfoMap.remove(jobId);
