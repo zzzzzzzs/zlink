@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.Collection;
 
-public class DeployPerJob {
+public class DeployJarPerJob {
     static Configuration configuration;
 
     public static void main(String[] args) throws Exception {
@@ -59,6 +59,7 @@ public class DeployPerJob {
                 .setSavepointRestoreSettings(SavepointRestoreSettings.none())
                 .setArguments(args)
                 .build();
+
 
 
 

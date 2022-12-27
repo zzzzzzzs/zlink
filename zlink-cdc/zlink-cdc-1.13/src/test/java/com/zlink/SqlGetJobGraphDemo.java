@@ -14,6 +14,7 @@ import org.apache.flink.configuration.DeploymentOptionsInternal;
 import org.apache.flink.configuration.GlobalConfiguration;
 import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.apache.flink.table.api.EnvironmentSettings;
+import org.apache.flink.table.api.Table;
 import org.apache.flink.table.api.TableConfig;
 import org.apache.flink.table.api.TableException;
 import org.apache.flink.table.api.internal.TableEnvironmentImpl;
@@ -21,9 +22,11 @@ import org.apache.flink.table.catalog.CatalogManager;
 import org.apache.flink.table.catalog.ObjectIdentifier;
 import org.apache.flink.table.catalog.UnresolvedIdentifier;
 import org.apache.flink.table.delegation.Executor;
+import org.apache.flink.table.delegation.Planner;
 import org.apache.flink.table.operations.CollectModifyOperation;
 import org.apache.flink.table.operations.Operation;
 import org.apache.flink.table.operations.QueryOperation;
+import org.apache.flink.table.operations.ddl.CreateTableOperation;
 import org.apache.flink.yarn.YarnClusterClientFactory;
 import org.apache.flink.yarn.YarnClusterDescriptor;
 import org.apache.flink.yarn.configuration.YarnConfigOptions;
@@ -37,7 +40,21 @@ import java.util.concurrent.CompletableFuture;
 
 public class SqlGetJobGraphDemo {
 
-    static String sql = "select 'aaa'";
+    static String sql1 = "CREATE TABLE datagen_dijie3 (\n" +
+            " f_sequence INT,\n" +
+            " f_random INT,\n" +
+            " f_random_str STRING\n" +
+            ") WITH (\n" +
+            " 'connector' = 'datagen',\n" +
+            " 'rows-per-second'='5',\n" +
+            " 'fields.f_sequence.kind'='sequence',\n" +
+            " 'fields.f_sequence.start'='1',\n" +
+            " 'fields.f_sequence.end'='1000',\n" +
+            " 'fields.f_random.min'='1',\n" +
+            " 'fields.f_random.max'='1000',\n" +
+            " 'fields.f_random_str.length'='10'\n" +
+            ")";
+    static String sql2 = "select * from datagen_dijie3";
     static Configuration configuration;
 
     public static void main(String[] args) throws Exception {
@@ -63,46 +80,51 @@ public class SqlGetJobGraphDemo {
         configuration.set(YarnConfigOptions.FLINK_DIST_JAR, FLINK_LIB_DIR + "/flink-dist_2.12-1.13.6.jar");
 
 
-
-
         // 创建执行环境
         EnvironmentSettings settings = EnvironmentSettings.newInstance().inStreamingMode().build();
-        TableEnvironmentImpl bsTableEnv = TableEnvironmentImpl.create(settings);
+        TableEnvironmentImpl tableEnv = TableEnvironmentImpl.create(settings);
 
-//        bsTableEnv.executeSql(sql).print();
-        Class<? extends TableEnvironmentImpl> aClass = bsTableEnv.getClass();
+//        tableEnv.sqlUpdate(sql1);
+//        Table table = tableEnv.sqlQuery(sql2);
+//        table.execute().print();
+
+
+        Class<? extends TableEnvironmentImpl> aClass = tableEnv.getClass();
         Field execEnvField = aClass.getDeclaredField("execEnv");
         execEnvField.setAccessible(true);
-        Executor execEnv = (Executor) execEnvField.get(bsTableEnv);
+        Executor execEnv = (Executor) execEnvField.get(tableEnv);
 
         Field tableConfigField = aClass.getDeclaredField("tableConfig");
         tableConfigField.setAccessible(true);
-        TableConfig tableConfig = (TableConfig) tableConfigField.get(bsTableEnv);
+        TableConfig tableConfig = (TableConfig) tableConfigField.get(tableEnv);
 
         // ==============================
-        List<Operation> operations = bsTableEnv.getParser().parse(sql);
+        List<Operation> operations = tableEnv.getParser().parse(sql1);
+        List<Operation> operations2 = tableEnv.getParser().parse(sql2);
 
-        if (operations.size() != 1) {
-            throw new TableException("aaaaaaaaaaaaaaaaa");
-        }
         final UnresolvedIdentifier unresolvedIdentifier =
                 UnresolvedIdentifier.of(
                         "Unregistered_Collect_Sink_" + CollectModifyOperation.getUniqueId());
-        CatalogManager catalogManager = bsTableEnv.getCatalogManager();
+        CatalogManager catalogManager = tableEnv.getCatalogManager();
         final ObjectIdentifier objectIdentifier =
                 catalogManager.qualifyIdentifier(unresolvedIdentifier);
 
-        CollectModifyOperation sinkOperation =
-                new CollectModifyOperation(objectIdentifier, (QueryOperation) operations.get(0));
 
-        List<Transformation<?>> transformations = bsTableEnv.getPlanner().translate(Collections.singletonList(sinkOperation));
+        CollectModifyOperation sinkOperation2 =
+                new CollectModifyOperation(objectIdentifier, (QueryOperation) operations2.get(0));
 
-        Pipeline pipeline = execEnv.createPipeline(transformations, tableConfig, "collect");
+//        List<Transformation<?>> transformations = tableEnv.getPlanner().translate(Collections.singletonList(sinkOperation));
+//        List<Transformation<?>> transformations2 = tableEnv.getPlanner().translate(Collections.singletonList(sinkOperation2));
 
-        JobGraph jobGraph = PipelineExecutorUtils.getJobGraph(pipeline, settings.toConfiguration());
-        System.out.println("hhhhhhhhhhhhhh: " + jobGraph);
+//        Pipeline pipeline = execEnv.createPipeline(transformations, tableConfig, "collect");
+//        Pipeline pipeline2 = execEnv.createPipeline(transformations2, tableConfig, "collect2");
 
-        deployJobGraphInternal(jobGraph, SqlGetJobGraphDemo.class.getClassLoader());
+//        JobGraph jobGraph = PipelineExecutorUtils.getJobGraph(pipeline, settings.toConfiguration());
+//        JobGraph jobGraph2 = PipelineExecutorUtils.getJobGraph(pipeline2, settings.toConfiguration());
+//        System.out.println("hhhhhhhhhhhhhh: " + jobGraph);
+//        System.out.println("hhhhhhhhhhhhhh: " + jobGraph2);
+
+//        deployJobGraphInternal(jobGraph, SqlGetJobGraphDemo.class.getClassLoader());
     }
 
 
