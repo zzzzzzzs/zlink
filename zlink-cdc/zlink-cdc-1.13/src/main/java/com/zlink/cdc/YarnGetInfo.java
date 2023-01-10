@@ -17,7 +17,7 @@ public class YarnGetInfo {
     public static void main(String[] args) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url("http://localhost:8088/ws/v1/cluster/apps?state=RUNNING&applicationTypes=Apache Flink")
+                .url("http://192.168.25.110:8088/ws/v1/cluster/apps?state=RUNNING&applicationTypes=Apache Flink")
                 .method("GET", null)
                 .build();
         Response response = client.newCall(request).execute();

@@ -13,29 +13,29 @@ import org.apache.flink.configuration.DeploymentOptionsInternal;
 import org.apache.flink.configuration.GlobalConfiguration;
 import org.apache.flink.runtime.jobgraph.JobGraph;
 import org.apache.flink.runtime.jobgraph.SavepointRestoreSettings;
+import org.apache.flink.runtime.util.HadoopUtils;
+import org.apache.flink.yarn.YarnClientYarnClusterInformationRetriever;
 import org.apache.flink.yarn.YarnClusterClientFactory;
 import org.apache.flink.yarn.YarnClusterDescriptor;
 import org.apache.flink.yarn.configuration.YarnConfigOptions;
 import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
+import org.apache.flink.yarn.configuration.YarnLogConfigUtil;
+import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.client.api.YarnClient;
+import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.concurrent.CompletableFuture;
-public class DeployJarPerJob {
-    private static Logger logger = LoggerFactory.getLogger(DeployJarPerJob.class);
+
+// 自定义 Hadoop 配置文件
+public class DeployJarPerJobCustConf {
+    private static Logger logger = LoggerFactory.getLogger(DeployJarPerJobCustConf.class);
     static Configuration configuration;
 
     public static void main(String[] args) throws Exception {
-
-
-//        org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
-//        conf.addResource(DeployJarPerJob.class.getResource("/opt/module/hadoop-3.1.3/etc/hadoop/core-site.xml"));
-//        conf.addResource(DeployJarPerJob.class.getResource("/opt/module/hadoop-3.1.3/etc/hadoop/hdfs-site.xml"));
-//        conf.addResource(DeployJarPerJob.class.getResource("/opt/module/hadoop-3.1.3/etc/hadoop/yarn-site.xml"));
-
 
         System.out.println(System.getenv("HADOOP_HOME"));
 //        System.out.println(System.getenv("HADOOP_CONF_DIR"));
@@ -80,7 +80,30 @@ public class DeployJarPerJob {
     protected static void deployJobGraphInternal(JobGraph jobGraph, ClassLoader userCodeClassLoader) throws Exception {
         YarnClusterClientFactory clusterClientFactory = new YarnClusterClientFactory();
 
-        YarnClusterDescriptor clusterDescriptor = clusterClientFactory.createClusterDescriptor(configuration);
+        final String configurationDirectory = configuration.get(DeploymentOptionsInternal.CONF_DIR);
+        YarnLogConfigUtil.setLogConfigFileInConfig(configuration, configurationDirectory);
+
+        final YarnClient yarnClient = YarnClient.createYarnClient();
+
+        YarnConfiguration yarnConfiguration = new YarnConfiguration();
+        yarnConfiguration.addResource(HadoopUtils.getHadoopConfiguration(configuration));
+        yarnConfiguration.addResource(new Path("/opt/module/hadoop-3.1.3/etc/hadoop/core-site.xml"));
+        yarnConfiguration.addResource(new Path("/opt/module/hadoop-3.1.3/etc/hadoop/hdfs-site.xml"));
+        yarnConfiguration.addResource(new Path("/opt/module/hadoop-3.1.3/etc/hadoop/yarn-site.xml"));
+
+        yarnClient.init(yarnConfiguration);
+        yarnClient.start();
+
+        // 设置日志的，没有的话看不到日志
+        YarnClientYarnClusterInformationRetriever clusterInformationRetriever = YarnClientYarnClusterInformationRetriever.create(yarnClient);
+
+        YarnClusterDescriptor clusterDescriptor = new YarnClusterDescriptor(
+                configuration,
+                yarnConfiguration,
+                yarnClient,
+                YarnClientYarnClusterInformationRetriever.create(yarnClient),
+                false);
+
 
         ClusterSpecification clusterSpecification = clusterClientFactory.getClusterSpecification(configuration);
 
