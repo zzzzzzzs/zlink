@@ -86,16 +86,13 @@ public class DeployJarPerJobCustConf {
         final YarnClient yarnClient = YarnClient.createYarnClient();
 
         YarnConfiguration yarnConfiguration = new YarnConfiguration();
-        yarnConfiguration.addResource(HadoopUtils.getHadoopConfiguration(configuration));
+        yarnConfiguration.addResource(HadoopUtils.getHadoopConfiguration(configuration)); // 这一步会加载基本的配置文件
         yarnConfiguration.addResource(new Path("/opt/module/hadoop-3.1.3/etc/hadoop/core-site.xml"));
         yarnConfiguration.addResource(new Path("/opt/module/hadoop-3.1.3/etc/hadoop/hdfs-site.xml"));
         yarnConfiguration.addResource(new Path("/opt/module/hadoop-3.1.3/etc/hadoop/yarn-site.xml"));
 
         yarnClient.init(yarnConfiguration);
         yarnClient.start();
-
-        // 设置日志的，没有的话看不到日志
-        YarnClientYarnClusterInformationRetriever clusterInformationRetriever = YarnClientYarnClusterInformationRetriever.create(yarnClient);
 
         YarnClusterDescriptor clusterDescriptor = new YarnClusterDescriptor(
                 configuration,
