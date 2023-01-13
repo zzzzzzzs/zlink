@@ -6,10 +6,10 @@ import com.zlink.common.model.Table;
 import org.apache.flink.configuration.Configuration;
 import org.apache.flink.configuration.RestOptions;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
-import org.apache.flink.table.api.EnvironmentSettings;
-import org.apache.flink.table.api.SqlDialect;
-import org.apache.flink.table.api.TableResult;
+import org.apache.flink.table.api.*;
 import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
+import org.apache.flink.table.api.bridge.java.internal.StreamTableEnvironmentImpl;
+import org.apache.flink.table.api.internal.TableEnvironmentImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -129,47 +129,61 @@ public class MysqlCDCBuilder {
     }
 
     public static void main(String[] args) {
-//        StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment("localhost", 8081);
-//        StreamExecutionEnvironment env = StreamExecutionEnvironment.createRemoteEnvironment("118.31.229.87", 8088);
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
-        env.setParallelism(1);
+        env.setParallelism(1); // TODO why only set 1
         EnvironmentSettings settings = EnvironmentSettings.newInstance()
                 .useBlinkPlanner()
                 .inStreamingMode()
                 .build();
-        StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env, settings);
+//        StreamTableEnvironment tableEnv = StreamTableEnvironment.create(env, settings);
+//        TableEnvironmentImpl tableEnv = StreamTableEnvironmentImpl.create(settings);
 //        tableEnv.getConfig().setSqlDialect(SqlDialect.DEFAULT);
-        String sourceDDL =
-                "CREATE TABLE aaa (\n" +
-                        " id INT,\n" +
-                        " name STRING,\n" +
-                        " primary key (id) not enforced\n" +
-                        ") WITH (\n" +
-                        " 'connector' = 'mysql-cdc',\n" +
-                        " 'hostname' = '192.168.52.154',\n" +
-                        " 'port' = '3306',\n" +
-                        " 'username' = 'root',\n" +
-                        " 'password' = '123456',\n" +
-                        " 'database-name' = 'test',\n" +
-                        " 'table-name' = 'aaa',\n" +
-                        " 'scan.startup.mode' = 'initial'\n" +
-                        ")";
+
+        TableConfig tableConfig = new TableConfig();
+        tableConfig.setSqlDialect(SqlDialect.DEFAULT);
+        StreamTableEnvironment tableEnv = StreamTableEnvironmentImpl.create(env, settings, tableConfig);
+
+//        EnvironmentSettings settings = EnvironmentSettings.newInstance()
+//                .useBlinkPlanner()
+//                .inBatchMode()
+//                .build();
+//        TableEnvironmentImpl tableEnv = TableEnvironmentImpl.create(settings);
+
+//        EnvironmentSettings envSettings = EnvironmentSettings.newInstance().useBlinkPlanner().inStreamingMode().build();
+//        TableEnvironment tableEnv = TableEnvironment.create(envSettings);
+
+
+        String sourceDDL = "CREATE TABLE user_info_source (\n" +
+                "`id` INT,\n" +
+                "`name` STRING,\n" +
+                "`age` INT,\n" +
+                "primary key (id) not enforced\n" +
+                ") with ( \n" +
+                " 'connector' = 'mysql-cdc',\n" +
+                " 'hostname' = '192.168.25.110',\n" +
+                " 'port' = '3366',\n" +
+                " 'username' = 'root',\n" +
+                " 'password' = '111',\n" +
+                " 'database-name' = 'test',\n" +
+                " 'table-name' = 'user_info',\n" +
+                " 'scan.startup.mode' = 'initial'\n" +
+                ")";
         // 输出目标表
-        String sinkDDL =
-                "CREATE TABLE bbb (\n" +
-                        " id INT,\n" +
-                        " name STRING,\n" +
-                        " primary key (id) not enforced\n" +
-                        ") WITH (\n" +
-                        " 'connector' = 'jdbc',\n" +
-                        " 'driver' = 'com.mysql.cj.jdbc.Driver',\n" +
-                        " 'url' = 'jdbc:mysql://192.168.52.154:3306/test',\n" +
-                        " 'username' = 'root',\n" +
-                        " 'password' = '123456',\n" +
-                        " 'table-name' = 'bbb'\n" +
-                        ")";
+        String sinkDDL = "CREATE TABLE user_info_sink (\n" +
+                "`id` INT,\n" +
+                "`name` STRING,\n" +
+                "`age` INT,\n" +
+                "primary key (id) not enforced\n" +
+                ") with ( \n" +
+                " 'connector' = 'jdbc',\n" +
+                " 'driver' = 'com.mysql.cj.jdbc.Driver',\n" +
+                " 'url' = 'jdbc:mysql://192.168.25.110:3366/cdc',\n" +
+                " 'username' = 'root',\n" +
+                " 'password' = '111',\n" +
+                " 'table-name' = 'user_info'\n" +
+                ")";
         // 简单的聚合处理
-        String transformDmlSQL = "insert into bbb select * from aaa";
+        String transformDmlSQL = "insert into user_info_sink select * from user_info_source";
 
 
         tableEnv.executeSql(sourceDDL).print();

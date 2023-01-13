@@ -12,7 +12,7 @@ spring:
   datasource:
     username: root
     password: 111
-    url: jdbc:mysql://192.168.25.110:3366/zlink
+    url: jdbc:mysql://192.168.25.110:3367/zlink
     driver-class-name: com.mysql.cj.jdbc.Driver
 
 mybatis-plus:

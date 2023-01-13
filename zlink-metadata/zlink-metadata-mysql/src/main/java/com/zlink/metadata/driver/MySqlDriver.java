@@ -13,6 +13,7 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author zs
@@ -295,6 +296,7 @@ public class MySqlDriver extends AbstractDriver {
                         syncTableInfo.getTableSuffix().trim().isBlank() == true ? "" : "_" + syncTableInfo.getTableSuffix());
 
         StringBuilder sb = new StringBuilder();
+        List<String> key = new ArrayList<>();
         sb.append("CREATE TABLE ")
                 .append(targetSchema)
                 .append(".")
@@ -307,13 +309,21 @@ public class MySqlDriver extends AbstractDriver {
                 sb.append("  `")
                         .append(column.getName()).append("`  ")
                         .append(mapMysqlType(column.getJavaType()));
-                if (Asserts.isAllNotNullString(column.getComment())) {
+                if (Asserts.isAllNotNullString(column.getComment())) {// 注释
                     sb.append(" COMMENT '").append(column.getComment()).append("'");
+                }
+                if ("PRI".equals(column.getColumnKey())) {// 主键
+                    key.add(column.getName());
                 }
                 sb.append(",\r\n");
             } catch (Exception e) {
                 logger.error("Column {} 出现异常 {}", column, e);
             }
+        }
+        if (!key.isEmpty()) {
+            sb.append("  PRIMARY KEY (")
+                    .append(key.stream().map(s -> "`" + s + "`").collect(Collectors.joining(", ")))
+                    .append("),\r\n"); // 添加 ,\r\n 是为了和删除回车换行保持一致
         }
         sb.deleteCharAt(sb.length() - 3);
         sb.append(") ENGINE=InnoDB ");
@@ -325,3 +335,4 @@ public class MySqlDriver extends AbstractDriver {
         return sb.toString();
     }
 }
+

@@ -1,6 +1,5 @@
 package com.zlink.model.req;
 
-import com.zlink.cdc.FlinkInfo;
 import lombok.Data;
 
 import java.util.List;
@@ -14,4 +13,6 @@ public class PushTaskInfoReq {
     private Integer clusterId;
     private Integer parallelism;
     private List<String> jobIds;
+    // TODO 这里本来是 Properties 但是不知道怎么传递，后面再说
+    private List<Object> props;
 }

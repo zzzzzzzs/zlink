@@ -66,6 +66,30 @@ public class JobFlinkConf extends BaseEntity {
     private String yarnUrl;
 
     /**
+     * 服务器上 FLINK_HOME 路径
+     */
+    @TableField("flink_home")
+    private String flinkHome;
+
+    /**
+     * 服务器上 core_site 路径
+     */
+    @TableField("core_site")
+    private String coreSite;
+
+    /**
+     * 服务器上 hdfs_site 路径
+     */
+    @TableField("hdfs_site")
+    private String hdfsSite;
+
+    /**
+     * 服务器上 yarn_site 路径
+     */
+    @TableField("yarn_site")
+    private String yarnSite;
+
+    /**
      * System 创建时间
      */
     @TableField("create_time")

@@ -9,6 +9,8 @@ import com.zlink.cdc.mysql.MysqlCDCBuilder;
 import com.zlink.common.model.Table;
 import com.zlink.common.utils.NetUtils;
 import com.zlink.dao.DatasourceMapper;
+import com.zlink.deploy.DeployJobParam;
+import com.zlink.deploy.YarnPerjobDeployer;
 import com.zlink.entity.JobFlinkConf;
 import com.zlink.entity.JobJdbcDatasource;
 import com.zlink.metadata.driver.Driver;
@@ -139,7 +141,7 @@ public class FlinkCDCService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
         return true;
     }
 
-    public boolean pushTask(PushTaskInfoReq req) {
+    public boolean pushTask(PushTaskInfoReq req) throws Exception {
         JobFlinkConf flinkConf = flinkConfService.getById(req.getClusterId());
         for (String jobId : req.getJobIds()) {
             FlinkCDCConfig config = flinkInfoMap.get(jobId).getConfig();
@@ -149,7 +151,14 @@ public class FlinkCDCService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
                     .setRemotePort(flinkConf.getPort())
                     .setParallelism(req.getParallelism())
             ;
-            TableResult transResult = CDCRun.perTask(config);
+            // 推送任务到集群上
+            DeployJobParam param = new DeployJobParam();
+            param.setFLINK_HOME(flinkConf.getFlinkHome());
+            param.setHADOOP_CORE_SITE_DIR(flinkConf.getCoreSite());
+            param.setHADOOP_HDFS_SITE_DIR(flinkConf.getHdfsSite());
+            param.setHADOOP_YARN_SITE_DIR(flinkConf.getYarnSite());
+            param.setSqls(CDCRun.getCDCSqls(config));
+            YarnPerjobDeployer.deploySql(param);
             // 停止本地任务
             JobClient client = flinkInfoMap.get(jobId).getJobClient();
             client.cancel();

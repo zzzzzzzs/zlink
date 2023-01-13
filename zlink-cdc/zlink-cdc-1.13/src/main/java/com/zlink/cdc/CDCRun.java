@@ -12,6 +12,8 @@ import org.apache.flink.table.api.bridge.java.StreamTableEnvironment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 /**
  * @author zs
  * @date 2022/12/11
@@ -53,8 +55,8 @@ public class CDCRun {
         return sb.toString();
     }
 
-    public static TableResult perTask(FlinkCDCConfig config) {
-        StreamTableEnvironment tableEnv = create(config);
+
+    public static List<String> getCDCSqls(FlinkCDCConfig config) {
         String sourceDDL;
         String sinkDDL;
         // source
@@ -83,9 +85,18 @@ public class CDCRun {
         logger.info("sourceDDL : {}", sourceDDL);
         logger.info("sinkDDL : {}", sinkDDL);
         logger.info("transformDDL : {}", transformDDL);
-        tableEnv.executeSql(sourceDDL);
-        tableEnv.executeSql(sinkDDL);
-        return tableEnv.executeSql(transformDDL);
+        return List.of(sourceDDL, sinkDDL, transformDDL);
+    }
+
+    public static TableResult perTask(FlinkCDCConfig config) {
+        StreamTableEnvironment tableEnv = create(config);
+        List<String> cdcSqls = getCDCSqls(config);
+        if (cdcSqls.size() != 3) {
+            throw new RuntimeException("please check generate sql num");
+        }
+        tableEnv.executeSql(cdcSqls.get(0));
+        tableEnv.executeSql(cdcSqls.get(1));
+        return tableEnv.executeSql(cdcSqls.get(2));
     }
 
     public static void main(String[] args) {

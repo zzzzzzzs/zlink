@@ -1,42 +1,25 @@
-package com.zlink;
+package com.zlink.deploy;
 
-import com.zlink.common.assertion.Asserts;
-import org.apache.flink.api.common.JobExecutionResult;
-import org.apache.flink.client.deployment.ClusterClientJobClientAdapter;
-import org.apache.flink.client.deployment.ClusterSpecification;
-import org.apache.flink.client.program.ClusterClientProvider;
-import org.apache.flink.configuration.Configuration;
-import org.apache.flink.configuration.DeploymentOptions;
-import org.apache.flink.configuration.DeploymentOptionsInternal;
-import org.apache.flink.configuration.GlobalConfiguration;
-import org.apache.flink.runtime.jobgraph.JobGraph;
+import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.table.api.EnvironmentSettings;
 import org.apache.flink.table.api.SqlDialect;
-import org.apache.flink.table.api.TableResult;
-import org.apache.flink.table.api.internal.TableEnvironmentImpl;
-import org.apache.flink.yarn.YarnClusterClientFactory;
-import org.apache.flink.yarn.YarnClusterDescriptor;
-import org.apache.flink.yarn.configuration.YarnConfigOptions;
-import org.apache.flink.yarn.configuration.YarnDeploymentTarget;
-import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.flink.table.api.TableConfig;
 
-import java.util.concurrent.CompletableFuture;
+// 使用自定义 CustomTableEnvironmentImpl cdc
+public class CustomCDCSqlEnvDemo {
+    public static void main(String[] args) {
 
-/**
- * @author zs
- * @date 2022/12/10
- */
-public class CDCTest1 {
-    public static void main(String[] args) throws Exception {
+        TableConfig tableConfig = new TableConfig();
+        tableConfig.setSqlDialect(SqlDialect.DEFAULT);
+        StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
+        env.setParallelism(1);
+        env.enableCheckpointing(3000);
         EnvironmentSettings settings = EnvironmentSettings.newInstance()
                 .useBlinkPlanner()
                 .inStreamingMode()
                 .build();
-        Configuration configuration = new Configuration();
-        configuration.setString("execution.checkpointing.interval", "3s");
-        configuration.setInteger("parallelism.default", 1);
-        TableEnvironmentImpl tableEnv = TableEnvironmentImpl.create(settings);
-        tableEnv.getConfig().setSqlDialect(SqlDialect.DEFAULT);
+
+        CustomTableEnvironmentImpl tableEnv = CustomTableEnvironmentImpl.create(env, settings, tableConfig);
 
         String sourceDDL = "CREATE TABLE user_info_source (\n" +
                 "`id` INT,\n" +
@@ -68,11 +51,10 @@ public class CDCTest1 {
                 " 'table-name' = 'user_info'\n" +
                 ")";
         // 简单的聚合处理
-        String transformDmlSQL = "insert into user_info_sink select * from user_info_source";
+        String transformDmlSQL = "upsert into user_info_sink select * from user_info_source";
 
         tableEnv.executeSql(sourceDDL);
         tableEnv.executeSql(sinkDDL);
         tableEnv.executeSql(transformDmlSQL);
     }
-
 }

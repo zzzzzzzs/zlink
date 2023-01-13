@@ -50,7 +50,7 @@ public class FlinkCDCController {
      * push task
      */
     @RequestMapping(value = "/pushTask", method = RequestMethod.POST)
-    public ApiResponse pushTask(@RequestBody PushTaskInfoReq req) {
+    public ApiResponse pushTask(@RequestBody PushTaskInfoReq req) throws Exception {
         return ApiResponse.ofSuccess(flinkcdcService.pushTask(req));
     }
 

@@ -8,6 +8,10 @@
         <result column="ip" property="ip"/>
         <result column="port" property="port"/>
         <result column="yarn_url" property="yarnUrl"/>
+        <result column="flink_home" property="flinkHome"/>
+        <result column="core_site" property="flinkHome"/>
+        <result column="hdfs_site" property="flinkHome"/>
+        <result column="yarn_site" property="flinkHome"/>
         <result column="create_time" property="createTime"/>
         <result column="update_time" property="updateTime"/>
     </resultMap>
@@ -18,7 +22,11 @@
         model,
         ip,
         port,
-        yarn_url
+        yarn_url,
+        flink_home,
+        core_site,
+        hdfs_site,
+        yarn_site
         from job_flink_conf
         where 1 = 1
         <if test="param.id != null">
