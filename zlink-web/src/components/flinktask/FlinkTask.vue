@@ -95,6 +95,24 @@
         <el-form-item label="并行度：">
           <el-input v-model="pushTaskForm.parallelism"></el-input>
         </el-form-item>
+        <div v-for="(item, i) in flinkProps" :key="i">
+          <el-row :gutter="24">
+            <el-col :span="10">
+              <el-form-item label="flink 配置参数:" prop="name">
+                <el-input v-model="item.k" clearable placeholder="key"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="10">
+              <el-form-item prop="age">
+                <el-input v-model="item.v" clearable placeholder="value"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="4">
+              <el-button circle icon="el-icon-plus" @click="addFlinkProps"></el-button>
+              <el-button circle icon="el-icon-minus" @click="subFlinkProps" v-if="i>0"></el-button>
+            </el-col>
+          </el-row>
+        </div>
       </el-form>
       <span slot="footer" class="dialog-footer">
         <el-button @click="pushTaskVisible = false">取 消</el-button>
@@ -122,10 +140,14 @@ export default {
       flinkConfList: [],
       flinkModel: [],
       pushModel: [],
+      flinkProps: [
+        {k: '', v: ''}
+      ],
       pushTaskForm: {
         clusterId: '',
         parallelism: 1,
         jobIds: [],
+        props: [],
       },
       pushTaskVisible: false,
       multipleSelection: [],
@@ -159,10 +181,11 @@ export default {
       this.multipleSelection.map(it => {
         this.pushTaskForm.jobIds.push(it.jobId)
       })
-      console.log(this.pushTaskForm)
       if (this.multipleSelection.length === 0) return this.$message.error("请勾选任务！")
+      if (this.pushTaskForm.clusterId === '') return this.$message.error("请选择推送集群！")
+      this.pushTaskForm.param = this.flinkProps
+      console.log(this.pushTaskForm)
       const {data: res} = await this.$http.post('cdc/pushTask', this.pushTaskForm)
-
       this.pushTaskForm.jobIds = []
       this.pushTaskVisible = false
     },
@@ -192,10 +215,21 @@ export default {
       this.flinkInfos = res.data
       console.log(this.flinkInfos)
     },
+    addFlinkProps() {
+      this.flinkProps.push({name: '', age: ''})
+    },
+    subFlinkProps(index) {
+      this.flinkProps.splice(index, 1)
+    },
   }
 }
 </script>
 
 <!--scoped 只在当前组件中生效，去掉在全局生效。一个组件中的样式不应该影响其他地方-->
 <style lang='less' scoped>
+.flink-props {
+  width: 200px;
+  border: 1px solid red;
+  display: inline-block;
+}
 </style>
