@@ -89,6 +89,10 @@ export default {
         '3': 'iconfont icon-shangpin',
         '4': 'iconfont icon-shangpin',
         '5': 'iconfont icon-shangpin',
+        '6': 'iconfont icon-shangpin',
+        '7': 'iconfont icon-shangpin',
+        '8': 'iconfont icon-shangpin',
+        '9': 'iconfont icon-shangpin',
         '102': 'iconfont icon-danju',
         '145': 'iconfont icon-baobiao'
       },

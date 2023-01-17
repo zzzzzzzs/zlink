@@ -13,7 +13,7 @@ const FlinkConf = () => import(/* webpackChunkName: "Flink_Conf" */ '../componen
 const MetaData = () => import(/* webpackChunkName: "Meta_Data" */ '../components/metadata/MetaData')
 const Cdc = () => import(/* webpackChunkName: "Cdc" */ '../components/cdc/Cdc')
 const FlinkTask = () => import(/* webpackChunkName: "FlinkTask" */ '../components/flinktask/FlinkTask')
-
+const FlinkSql = () => import(/* webpackChunkName: "FlinkSql" */ '../components/flinksql/FlinkSql')
 
 Vue.use(VueRouter)
 
@@ -36,6 +36,7 @@ const routes = [
       {path: '/metadata', component: MetaData},
       {path: '/cdc', component: Cdc},
       {path: '/flinktask', component: FlinkTask},
+      {path: '/flinksql', component: FlinkSql},
     ]
   }
 ]

@@ -140,14 +140,12 @@ export default {
       flinkConfList: [],
       flinkModel: [],
       pushModel: [],
-      flinkProps: [
-        {k: '', v: ''}
-      ],
+      flinkProps: {},
       pushTaskForm: {
         clusterId: '',
         parallelism: 1,
         jobIds: [],
-        props: [],
+        props: {},
       },
       pushTaskVisible: false,
       multipleSelection: [],
@@ -183,7 +181,7 @@ export default {
       })
       if (this.multipleSelection.length === 0) return this.$message.error("请勾选任务！")
       if (this.pushTaskForm.clusterId === '') return this.$message.error("请选择推送集群！")
-      this.pushTaskForm.param = this.flinkProps
+      this.pushTaskForm.props = this.flinkProps
       console.log(this.pushTaskForm)
       const {data: res} = await this.$http.post('cdc/pushTask', this.pushTaskForm)
       this.pushTaskForm.jobIds = []
@@ -216,7 +214,7 @@ export default {
       console.log(this.flinkInfos)
     },
     addFlinkProps() {
-      this.flinkProps.push({name: '', age: ''})
+      this.flinkProps.push({k: '', v: ''})
     },
     subFlinkProps(index) {
       this.flinkProps.splice(index, 1)
