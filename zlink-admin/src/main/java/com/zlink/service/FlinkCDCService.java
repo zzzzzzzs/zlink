@@ -153,6 +153,7 @@ public class FlinkCDCService extends ServiceImpl<DatasourceMapper, JobJdbcDataso
             ;
             // 推送任务到集群上
             DeployJobParam param = new DeployJobParam();
+            param.getProps().putAll(req.getProps());
             param.setFLINK_HOME(flinkConf.getFlinkHome());
             param.setHADOOP_CORE_SITE_DIR(flinkConf.getCoreSite());
             param.setHADOOP_HDFS_SITE_DIR(flinkConf.getHdfsSite());
