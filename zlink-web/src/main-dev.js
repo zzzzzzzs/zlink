@@ -21,7 +21,7 @@ import 'nprogress/nprogress.css'
 
 import axios from 'axios'
 // 配置请求的根路径
-axios.defaults.baseURL = 'http://118.31.229.87:5465/api/'
+axios.defaults.baseURL = 'http://docker-node4:5465/api/'
 // TODO 每次发送请求都会通过拦截器设置 token 令牌
 //    请求到达服务器之前先调用回调函数
 // 在 request 拦截器中，展示进度条 NProgress.start()

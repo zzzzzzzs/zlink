@@ -67,6 +67,18 @@
             </el-form-item>
           </div>
         </div>
+        <el-form-item label="FLINK_HOME 路径">
+          <el-input v-model="addFlinkConfForm.flinkHome"></el-input>
+        </el-form-item>
+        <el-form-item label="core_site 路径">
+          <el-input v-model="addFlinkConfForm.coreSite"></el-input>
+        </el-form-item>
+        <el-form-item label="hdfs_site 路径">
+          <el-input v-model="addFlinkConfForm.hdfsSite"></el-input>
+        </el-form-item>
+        <el-form-item label="yarn_site 路径">
+          <el-input v-model="addFlinkConfForm.yarnSite"></el-input>
+        </el-form-item>
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -96,6 +108,11 @@ export default {
         model: '',
         ip: '',
         port: '',
+        yarnUrl: '',
+        flinkHome: '',
+        coreSite: '',
+        hdfsSite: '',
+        yarnSite: '',
       },
       flinkModel: [],
       flinkConf: [],

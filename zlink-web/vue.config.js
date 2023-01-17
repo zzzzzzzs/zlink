@@ -5,7 +5,7 @@ module.exports = {
     //以上的ip和端口是我们本机的;下面为需要跨域的
     proxy: { //配置跨域
       '/api': {
-        target: 'http://118.31.229.87:5465/',
+        target: 'http://docker-node4:5465/',
         ws: true,
         changeOrigin: true,//允许跨域
         pathRewrite: {
