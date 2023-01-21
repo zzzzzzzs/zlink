@@ -180,3 +180,7 @@ Temporary Items
 
 # JRebel
 rebel*.xml
+**.idea
+**node_modules
+**.cache
+**.temp

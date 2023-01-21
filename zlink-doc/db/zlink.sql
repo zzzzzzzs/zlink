@@ -1,17 +1,17 @@
 /*
  Navicat Premium Data Transfer
 
- Source Server         : 超融合-MySQL
+ Source Server         : ubuntu-mysql8.0.24
  Source Server Type    : MySQL
- Source Server Version : 80030
- Source Host           : 192.168.52.154:3306
+ Source Server Version : 80024 (8.0.24)
+ Source Host           : 192.168.25.110:3367
  Source Schema         : zlink
 
  Target Server Type    : MySQL
- Target Server Version : 80030
+ Target Server Version : 80024 (8.0.24)
  File Encoding         : 65001
 
- Date: 26/12/2022 11:26:18
+ Date: 16/01/2023 18:02:33
 */
 
 SET NAMES utf8mb4;
@@ -22,10 +22,10 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- ----------------------------
 DROP TABLE IF EXISTS `job_datasource_type`;
 CREATE TABLE `job_datasource_type`  (
-                                        `database_type` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数据源类型',
-                                        `jdbc_driver_class` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'jdbc driver class',
-                                        PRIMARY KEY (`database_type`) USING BTREE
-) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '数据源类型' ROW_FORMAT = DYNAMIC;
+  `database_type` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数据源类型',
+  `jdbc_driver_class` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT 'jdbc driver class',
+  PRIMARY KEY (`database_type`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '数据源类型' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of job_datasource_type
@@ -38,31 +38,36 @@ INSERT INTO `job_datasource_type` VALUES ('postgresql', 'org.postgresql.Driver')
 -- ----------------------------
 DROP TABLE IF EXISTS `job_flink_conf`;
 CREATE TABLE `job_flink_conf`  (
-                                   `id` int NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-                                   `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '集群名字',
-                                   `model` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'flink 集群模式',
-                                   `ip` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'ip',
-                                   `port` int NULL DEFAULT NULL COMMENT '端口',
-                                   `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'System 创建时间',
-                                   `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'System 更新时间',
-                                   PRIMARY KEY (`id`, `name`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'flink 配置信息' ROW_FORMAT = DYNAMIC;
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '集群名字',
+  `model` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'flink 集群模式',
+  `ip` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'ip',
+  `port` int NULL DEFAULT NULL COMMENT '端口',
+  `yarn_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'yarn 网址',
+  `flink_home` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '服务器上 FLINK_HOME 路径',
+  `core_site` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '服务器上 core_site 路径',
+  `hdfs_site` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '服务器上 hdfs_site 路径',
+  `yarn_site` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '服务器上 yarn_site 路径',
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'System 创建时间',
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'System 更新时间',
+  PRIMARY KEY (`id`, `name`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 5 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'flink 配置信息' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of job_flink_conf
 -- ----------------------------
-INSERT INTO `job_flink_conf` VALUES (3, '测试1', 'standalone', 'localhost', 8081, '2022-12-20 16:30:27', '2022-12-22 15:27:13');
-INSERT INTO `job_flink_conf` VALUES (4, '测试2', 'standalone', 'localhost', 8081, '2022-12-20 16:31:36', '2022-12-22 15:27:14');
+INSERT INTO `job_flink_conf` VALUES (3, '测试1', 'standalone', 'localhost', 8081, NULL, '/opt/module/flink-1.13.6', NULL, NULL, NULL, '2022-12-20 16:30:27', '2023-01-13 08:16:59');
+INSERT INTO `job_flink_conf` VALUES (4, 'docker-yarn', 'yarn', 'localhost', 8081, 'http://docker-node1:8088/', '/opt/module/flink-1.13.6', '/opt/module/hadoop-3.1.3/etc/hadoop/core-site.xml', '/opt/module/hadoop-3.1.3/etc/hadoop/hdfs-site.xml', '/opt/module/hadoop-3.1.3/etc/hadoop/yarn-site.xml', '2022-12-20 16:31:36', '2023-01-13 08:23:55');
 
 -- ----------------------------
 -- Table structure for job_flink_model
 -- ----------------------------
 DROP TABLE IF EXISTS `job_flink_model`;
 CREATE TABLE `job_flink_model`  (
-                                    `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
-                                    `flink_model` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '集群模式',
-                                    PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'flink 集群模式' ROW_FORMAT = DYNAMIC;
+  `id` int NOT NULL AUTO_INCREMENT COMMENT '主键',
+  `flink_model` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '集群模式',
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 4 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'flink 集群模式' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of job_flink_model
@@ -76,47 +81,39 @@ INSERT INTO `job_flink_model` VALUES (3, 'k8s');
 -- ----------------------------
 DROP TABLE IF EXISTS `job_jdbc_datasource`;
 CREATE TABLE `job_jdbc_datasource`  (
-                                        `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
-                                        `database_type` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数据源类型',
-                                        `database_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数据源名称',
-                                        `user_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户名',
-                                        `password` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
-                                        `jdbc_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'jdbc url',
-                                        `jdbc_driver_class` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'jdbc驱动类',
-                                        `comments` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
-                                        `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'System 创建时间',
-                                        `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'System 更新时间',
-                                        PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 23 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'jdbc数据源配置' ROW_FORMAT = DYNAMIC;
+  `id` bigint NOT NULL AUTO_INCREMENT COMMENT '自增主键',
+  `database_type` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数据源类型',
+  `database_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '数据源名称',
+  `user_name` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户名',
+  `password` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL COMMENT '密码',
+  `jdbc_url` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'jdbc url',
+  `jdbc_driver_class` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT 'jdbc驱动类',
+  `comments` varchar(1000) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '备注',
+  `create_time` datetime NULL DEFAULT CURRENT_TIMESTAMP COMMENT 'System 创建时间',
+  `update_time` datetime NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'System 更新时间',
+  PRIMARY KEY (`id`, `database_name`) USING BTREE
+) ENGINE = InnoDB AUTO_INCREMENT = 25 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = 'jdbc数据源配置' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of job_jdbc_datasource
 -- ----------------------------
-INSERT INTO `job_jdbc_datasource` VALUES (9, 'postgresql', 'dubhe_pro', 'zmt_yunwei', 'ZMT*yu9n8wei%', 'jdbc:postgresql://gp-bp106208z48z67f0zo-master.gpdbmaster.rds.aliyuncs.com:5432/dubhe', 'org.postgresql.Driver', '这是一个备注', '2022-11-26 21:38:53', '2022-11-26 21:38:53');
-INSERT INTO `job_jdbc_datasource` VALUES (10, 'mysql', 'edb-pro', 'dev_zhaoshuo', '$m!hQ!X&j%nZa#KnB', 'jdbc:mysql://rm-bp13s2nco94n09o32vo.mysql.rds.aliyuncs.com:3306/zmtdata_ordercenter', 'com.mysql.cj.jdbc.Driver', '这是一个备注', '2022-11-26 21:38:53', '2022-11-26 21:38:53');
-INSERT INTO `job_jdbc_datasource` VALUES (12, 'mysql', 'app_pro', 'dev_zhaoshuo', '$m!hQ!X&j%nZa#KnB', 'jdbc:mysql://pro-myjk-slave-01.mysql.rds.aliyuncs.com:3306/myjk_content', 'com.mysql.cj.jdbc.Driver', '这是一个备注', '2022-11-26 21:38:53', '2022-11-26 21:38:53');
-INSERT INTO `job_jdbc_datasource` VALUES (13, 'mysql', 'bighealth-pro', 'zs', 'aa', 'jdbc:mysql://rm-bp1de47f853t5bh16.mysql.rds.aliyuncs.com:3306/bighealth', 'com.mysql.cj.jdbc.Driver', '这是一个备注', '2022-11-26 21:38:54', '2022-11-26 21:38:54');
-INSERT INTO `job_jdbc_datasource` VALUES (16, 'mysql', 'aaa', 'root', '123456', 'jdbc:mysql://192.168.52.154:3306/zlink', 'com.mysql.cj.jdbc.Driver', 'a', '2022-11-27 16:02:03', '2022-11-27 16:02:10');
-INSERT INTO `job_jdbc_datasource` VALUES (18, 'mysql', 'bbb', 'root', '123456', 'jdbc:mysql://192.168.52.154:3306/zlink', 'com.mysql.cj.jdbc.Driver', '', '2022-11-27 16:32:46', '2022-11-27 16:32:46');
-INSERT INTO `job_jdbc_datasource` VALUES (19, 'mysql', 'ccc', 'root', '123456', 'jdbc:mysql://192.168.52.154:3306/zlink', 'com.mysql.cj.jdbc.Driver', 'asdasdsa', '2022-11-27 16:33:27', '2022-11-27 16:33:27');
-INSERT INTO `job_jdbc_datasource` VALUES (20, 'mysql', '小程序', 'dev_zhaoshuo', '$m!hQ!X&j%nZa#KnB', 'jdbc:mysql://pro-spark-shop-master-public.mysql.rds.aliyuncs.com:3306/shop_analysis', 'com.mysql.cj.jdbc.Driver', '', '2022-12-05 18:55:28', '2022-12-05 18:55:28');
-INSERT INTO `job_jdbc_datasource` VALUES (21, 'mysql', '巨量', 'rds_admin', '1mSGYtKdLylI_2a4_1ghFI$J3WJ7', 'jdbc:mysql://106.120.188.210:3306/lianshan_rds_1740199848264712', 'com.mysql.cj.jdbc.Driver', '', '2022-12-13 16:44:57', '2022-12-13 16:44:57');
-INSERT INTO `job_jdbc_datasource` VALUES (22, 'postgresql', 'gp_dev', 'gpadmin', 'yk3ysjtsws', 'jdbc:postgresql://8.136.151.87:2345/dubhe', 'org.postgresql.Driver', '', '2022-12-25 14:59:48', '2022-12-25 14:59:48');
+INSERT INTO `job_jdbc_datasource` VALUES (23, 'mysql', 'zlink', 'root', '111', 'jdbc:mysql://192.168.25.110:3367/zlink', 'com.mysql.cj.jdbc.Driver', '', '2023-01-07 06:58:09', '2023-01-07 06:58:09');
+INSERT INTO `job_jdbc_datasource` VALUES (24, 'postgresql', 'postgre', 'postgres', '111', 'jdbc:postgresql://192.168.25.110:5432/postgres', 'org.postgresql.Driver', '', '2023-01-07 07:11:45', '2023-01-07 07:11:45');
 
 -- ----------------------------
 -- Table structure for job_sys_menus
 -- ----------------------------
 DROP TABLE IF EXISTS `job_sys_menus`;
 CREATE TABLE `job_sys_menus`  (
-                                  `id` int NOT NULL AUTO_INCREMENT,
-                                  `parent_id` int NULL DEFAULT NULL COMMENT '用户名',
-                                  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '密码',
-                                  `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
-                                  `sort` int NULL DEFAULT NULL,
-                                  `role_id` int NULL DEFAULT 0 COMMENT '角色ID',
-                                  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-                                  PRIMARY KEY (`id`) USING BTREE
+  `id` int NOT NULL AUTO_INCREMENT,
+  `parent_id` int NULL DEFAULT NULL COMMENT '用户名',
+  `name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '密码',
+  `path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
+  `sort` int NULL DEFAULT NULL,
+  `role_id` int NULL DEFAULT 0 COMMENT '角色ID',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 8 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '菜单表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
@@ -135,15 +132,15 @@ INSERT INTO `job_sys_menus` VALUES (7, 1, '数据源中心', 'datasource', 1, 0,
 -- ----------------------------
 DROP TABLE IF EXISTS `job_sys_user`;
 CREATE TABLE `job_sys_user`  (
-                                 `id` int NOT NULL AUTO_INCREMENT,
-                                 `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户名',
-                                 `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '密码',
-                                 `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
-                                 `role_id` int NULL DEFAULT 0 COMMENT '角色ID',
-                                 `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-                                 `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-                                 `delete_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否有效  0有效  1无效',
-                                 PRIMARY KEY (`id`) USING BTREE
+  `id` int NOT NULL AUTO_INCREMENT,
+  `username` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '用户名',
+  `password` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '密码',
+  `nickname` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NULL DEFAULT NULL COMMENT '昵称',
+  `role_id` int NULL DEFAULT 0 COMMENT '角色ID',
+  `create_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `delete_status` tinyint(1) NOT NULL DEFAULT 1 COMMENT '是否有效  0有效  1无效',
+  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE = InnoDB AUTO_INCREMENT = 10008 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_general_ci COMMENT = '用户表' ROW_FORMAT = Dynamic;
 
 -- ----------------------------
