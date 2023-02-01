@@ -1,72 +1,67 @@
-usage="Usage: zlink.sh (start|stop) <command> "
+usage="Usage: zlink.sh (start|stop)"
 
-# if no args specified, show usage
-if [ $# -le 1 ]; then
+# if args length not equal 1, show usage
+if [ $# != 1 ];then
   echo $usage
   exit 1
 fi
 
-startStop=$1
-shift
-command=$1
-shift
-
-echo "Begin $startStop $command......"
-
+cmd=$1
 BIN_DIR=`dirname $0`
 BIN_DIR=`cd "$BIN_DIR"; pwd`
-AIPLATFORM_HOME=$BIN_DIR/..
+
+# get ZLINK_HOME
+ZLINK_HOME=$BIN_DIR/..
 
 source /etc/profile
-
 export JAVA_HOME=$JAVA_HOME
+export FLINK_HOME=$FLINK_HOME
 export HOSTNAME=`hostname`
-
-export AIPLATFORM_PID_DIR=$AIPLATFORM_HOME/pid
-export AIPLATFORM_LOG_DIR=$AIPLATFORM_HOME/logs
-export AIPLATFORM_CONF_DIR=$AIPLATFORM_HOME/config
-export AIPLATFORM_LIB_JARS=`find  $AIPLATFORM_HOME/lib/  -name  *.jar | grep -v aiplatform-scheduler-1.0-SNAPSHOT.jar  | xargs |  sed "s/ /:/g"`
-
+export ZLINK_PID_DIR=$ZLINK_HOME/pid
+export ZLINK_LOG_DIR=$ZLINK_HOME/logs
+export ZLINK_CONF_DIR=$ZLINK_HOME/config
+export ZLINK_LIB_JARS=`find  $ZLINK_HOME/lib/  -name  *.jar | xargs |  sed "s/ /:/g"`
 export STOP_TIMEOUT=5
 
-if [ ! -d "$AIPLATFORM_LOG_DIR" ]; then
-    mkdir $AIPLATFORM_LOG_DIR
-fi
-
-log=$AIPLATFORM_LOG_DIR/$command-$HOSTNAME.out
-pid=$AIPLATFORM_PID_DIR/$command.pid
-
-cd $AIPLATFORM_HOME
-
-if [ "$command" = "aiplatform" ]; then
-    HEAP_INITIAL_SIZE=1g
-    HEAP_MAX_SIZE=1g
-    HEAP_NEW_GENERATION_SIZE=500m
-    LOG_FILE="-Dlogging.config=classpath:logback-api.xml -Dspring.profiles.active=dev"
-    CLASS=com.hongshan.aiplatform.api.ApiApplicationServer
-else
-  echo "Error: No command named $command was found."
+# 如果 FLINK_HOME 不存在
+if [ -z $FLINK_HOME ];then
+	echo "FLINKE_HOME not exist, please check!"
   exit 1
 fi
 
-export AIPLATFORM_OPTS="-server -Xms$HEAP_INITIAL_SIZE -Xmx$HEAP_MAX_SIZE -Xmn$HEAP_NEW_GENERATION_SIZE -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xss512k -XX:+UseParNewGC -XX:+UseConcMarkSweepGC -XX:+CMSParallelRemarkEnabled -XX:LargePageSizeInBytes=128m -XX:+UseCMSInitiatingOccupancyOnly -XX:CMSInitiatingOccupancyFraction=70 -XX:+PrintGCDetails -Xloggc:$AIPLATFORM_LOG_DIR/gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"
+if [ ! -d "$ZLINK_LOG_DIR" ]; then
+    mkdir $ZLINK_LOG_DIR
+fi
 
-case $startStop in
+log=$ZLINK_LOG_DIR/zlink-$HOSTNAME.out
+pid=$ZLINK_PID_DIR/zlink.pid
+
+cd $ZLINK_HOME
+
+HEAP_INITIAL_SIZE=1g
+HEAP_MAX_SIZE=1g
+HEAP_NEW_GENERATION_SIZE=500m
+# LOG_FILE="-Dlogging.config=classpath:log4j2.xml -Dspring.profiles.active=dev"
+LOG_FILE="-Dlogging.config=classpath:log4j2.xml"
+CLASS=com.zlink.Zlink
+
+# export ZLINK_OPTS="-server -Xms$HEAP_INITIAL_SIZE -Xmx$HEAP_MAX_SIZE -Xmn$HEAP_NEW_GENERATION_SIZE -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xss512k -XX:+UseG1GC -XX:LargePageSizeInBytes=128m -XX:+PrintGCDetails -Xloggc:$ZLINK_LOG_DIR/gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"
+export ZLINK_OPTS="-server -Xms$HEAP_INITIAL_SIZE -Xmx$HEAP_MAX_SIZE -Xmn$HEAP_NEW_GENERATION_SIZE -XX:MetaspaceSize=128m -XX:MaxMetaspaceSize=128m -Xss512k -XX:+UseG1GC -XX:LargePageSizeInBytes=128m -Xlog:gc*:$ZLINK_LOG_DIR/gc.log -XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=dump.hprof"
+case $cmd in
   (start)
-  [ -w "$AIPLATFORM_PID_DIR" ] || mkdir -p "$AIPLATFORM_PID_DIR"
+  [ -w "$ZLINK_PID_DIR" ] || mkdir -p "$ZLINK_PID_DIR"
 
   if [ -f $pid ]; then
       if kill -0 `cat $pid` > /dev/null 2>&1; then
-        echo $command running as process `cat $pid`. Stop it first.
+        echo zlink application running as process `cat $pid`. Stop it first.
         exit 1
       fi
   fi
 
-  echo starting $command, logging to $log
+  echo logging to $log
 
-  exec_command="$LOG_FILE $AIPLATFORM_OPTS -classpath $AIPLATFORM_CONF_DIR:$AIPLATFORM_LIB_JARS $CLASS"
-
-  echo "nohup $JAVA_HOME/bin/java $exec_command > $log 2>&1 &"
+  exec_command="$LOG_FILE $ZLINK_OPTS -classpath $ZLINK_CONF_DIR:$ZLINK_LIB_JARS $CLASS"
+  # nohup $JAVA_HOME/bin/java $exec_command
   nohup $JAVA_HOME/bin/java $exec_command > $log 2>&1 &
   echo $! > $pid
   ;;
@@ -76,19 +71,19 @@ case $startStop in
    if [ -f $pid ]; then
      TARGET_PID=`cat $pid`
      if kill -0 $TARGET_PID > /dev/null 2>&1; then
-       echo stopping $command
+       echo stopping zlink application, stop normally after $STOP_TIMEOUT seconds
        kill $TARGET_PID
        sleep $STOP_TIMEOUT
        if kill -0 $TARGET_PID > /dev/null 2>&1; then
-          echo "$command did not stop gracefully after $STOP_TIMEOUT seconds: killing with kill -9"
+          echo "zlink application did not stop gracefully after $STOP_TIMEOUT seconds: killing with kill -9"
           kill -9 $TARGET_PID
        fi
      else
-       echo no $command to stop
+       echo no zlink application to stop
      fi
      rm -f $pid
    else
-     echo no $command to stop
+     echo no zlink application to stop
    fi
    ;;
 
@@ -98,5 +93,3 @@ case $startStop in
    ;;
 
 esac
-
-echo "End $startStop $command."
