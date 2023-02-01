@@ -17,10 +17,10 @@
 
     <modules>
         <module>zlink-common</module>
+        <module>zlink-alert</module>
         <module>zlink-metadata</module>
         <module>zlink-flink</module>
         <module>zlink-cdc</module>
-        <!--        <module>zlink-alert</module>-->
         <module>zlink-admin</module>
         <module>assembly</module> <!--打包模块放在最后-->
     </modules>
