@@ -3,8 +3,7 @@
     <!-- 头部区域-->
     <el-header>
       <div>
-        <img src='../assets/dolphin.png' height='100' width='100' alt=''>
-        <span>zlink</span>
+        <img src='../assets/logo.svg' height='100' width='100' alt=''>
       </div>
       <el-button type='info' @click='logout'>退出</el-button>
     </el-header>
@@ -16,7 +15,7 @@
         <!-- 侧边栏菜单区域-->
         <!-- router， 开启路由模式， 通过二级菜单的 index 值设置-->
         <el-menu
-          background-color='#545c64'
+          background-color='#001529'
           text-color='#fff'
           active-text-color='#ffd04b'
           unique-opened
@@ -143,7 +142,7 @@ export default {
 
 
 .el-header {
-  background-color: #e1dee5;
+  background-color: #fff;
   display: flex;
   justify-content: space-between;
   padding: 0;
@@ -162,7 +161,7 @@ export default {
 }
 
 .el-aside {
-  background-color: #2c2d2f;
+  background-color: #001529;
 }
 
 .el-main {
@@ -170,6 +169,14 @@ export default {
 
   .el-menu {
     border-right: none;
+  }
+}
+
+.el-menu-item.is-active {
+  background-color: #224593 !important;
+  color: #fff;
+  span {
+    color: #fff !important;
   }
 }
 

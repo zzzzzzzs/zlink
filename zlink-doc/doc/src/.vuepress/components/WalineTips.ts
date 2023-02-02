@@ -30,10 +30,11 @@ export default defineComponent({
       h(
         'div',
         { class: ['waline-tips-wrapper', { home: isHome.value }] },
-        h('div', {
-          class: 'waline-tips',
-          innerHTML: text.value,
-        })
+        // 首页提示信息
+        // h('div', {
+        //   class: 'waline-tips',
+        //   innerHTML: text.value,
+        // })
       );
   },
 });

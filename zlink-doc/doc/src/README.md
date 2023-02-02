@@ -7,11 +7,11 @@ heroText: zlink
 tagline: 一个可以简化 flink cdc 和 flink sql 开发的工具
 actions:
 - text: Github
-  link: /zh/demo/
+  link: https://github.com/zzzzzzzs/zlink
   type: primary
 
 - text: 文档 💡
-  link: /zh/guide/
+  link: /guide/get-started/
 
 [//]: # (图标网站：https://vuepress-theme-hope.github.io/v1/zh/guide/interface/icon.html#%E7%B2%BE%E9%80%89%E5%9B%BE%E6%A0%87)
 
