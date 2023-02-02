@@ -5,6 +5,8 @@ import { redirectPlugin } from 'vuepress-plugin-redirect';
 import theme from './theme';
 
 export default defineUserConfig({
+  base: '/zlink/',
+  dest: 'dist',
   locales: {
     '/': {
       lang: 'zh-CN',

@@ -184,4 +184,5 @@ rebel*.xml
 **node_modules
 **.cache
 **.temp
+**dist
 zlink-admin/src/main/resources/static
