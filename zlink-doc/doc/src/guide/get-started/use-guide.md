@@ -7,7 +7,7 @@ redirectFrom: /guide/use-guide.html
 
 访问 `http:ip:5465` 地址，进入登录界面
 
-![登录界面](./assets/image-20230202144429353.png)
+![登录界面](./assets/image-20230202164709623.png)
 
 ## 数据源配置中心
 

@@ -1,5 +1,7 @@
 # zlink 
 
+[![CN doc](https://img.shields.io/badge/文档-中文版-blue.svg)](https://zzzzzzzs.github.io/zlink/)
+
 zlink 是一个基于 flink 开发的分布式数据开发工具，提供简单的易用的操作界面，降低用户学习 flink 的成本，缩短任务配置时间，避免配置过程中出现错误。用户可以通过拖拉拽的方式实现数据的实时同步，支持多数据源之间的数据同步。同时一键部署，支持查看日志，任务报警，任务重启等功能。
 
 ## 使用场景
@@ -14,7 +16,7 @@ zlink 是一个基于 flink 开发的分布式数据开发工具，提供简单�
 
 ![Flink_CDC](https://ververica.github.io/flink-cdc-connectors/master/_images/flinkcdc.png)
 
-![zlink-架构图](./zlink-doc/doc/src/guide/get-started/./zlink-doc/doc/src/guide/get-started/assets/ArchitectureDiagram-架构图.png)
+![zlink-架构图](./zlink-doc/doc/src/guide/get-started/assets/ArchitectureDiagram-架构图.png)
 
 ## 特征
 
@@ -32,7 +34,7 @@ zlink 是一个基于 flink 开发的分布式数据开发工具，提供简单�
 
 访问 `http:ip:5465` 地址，进入登录界面
 
-![登录界面](./zlink-doc/doc/src/guide/get-started/assets/image-20230202144429353.png)
+![登录界面](./zlink-doc/doc/src/guide/get-started/assets/image-20230202164709623.png)
 
 ## 数据源配置中心
 

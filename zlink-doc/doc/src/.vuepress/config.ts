@@ -7,6 +7,8 @@ import theme from './theme';
 export default defineUserConfig({
   base: '/zlink/',
   dest: 'dist',
+  temp: '.temp',
+  cache: '.cache',
   locales: {
     '/': {
       lang: 'zh-CN',
