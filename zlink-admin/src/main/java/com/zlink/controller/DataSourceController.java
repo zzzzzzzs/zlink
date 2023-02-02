@@ -24,7 +24,7 @@ import java.net.UnknownHostException;
  * @since 2022-11-26
  */
 @RestController
-@RequestMapping("/datasource")
+@RequestMapping("/api/datasource")
 @RequiredArgsConstructor
 @CrossOrigin
 @Slf4j

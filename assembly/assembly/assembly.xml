@@ -59,6 +59,8 @@
             <includes>
                 <include>*.sh</include>
             </includes>
+            <!--打包文件权限-->
+            <fileMode>0755</fileMode>
         </fileSet>
 
         <!--logs-->

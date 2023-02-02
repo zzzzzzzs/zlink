@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2022-11-26
  */
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/api/login")
 @RequiredArgsConstructor
 @CrossOrigin
 public class LoginController {

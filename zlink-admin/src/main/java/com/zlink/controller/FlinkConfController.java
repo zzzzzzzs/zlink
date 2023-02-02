@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2022-12-20
  */
 @RestController
-@RequestMapping("/flinkconf")
+@RequestMapping("/api/flinkconf")
 @RequiredArgsConstructor
 @CrossOrigin
 @Slf4j

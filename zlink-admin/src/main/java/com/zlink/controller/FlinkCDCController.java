@@ -16,7 +16,7 @@ import java.util.concurrent.ExecutionException;
  * @date 2022/12/9
  */
 @RestController
-@RequestMapping("/cdc")
+@RequestMapping("/api/cdc")
 @RequiredArgsConstructor
 @CrossOrigin
 public class FlinkCDCController {

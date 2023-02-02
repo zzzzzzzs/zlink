@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
  * @since 2022-12-19
  */
 @RestController
-@RequestMapping("/flink-model")
+@RequestMapping("/api/flink-model")
 @RequiredArgsConstructor
 @CrossOrigin
 public class FlinkModelController {

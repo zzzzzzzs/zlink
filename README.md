@@ -63,7 +63,7 @@
 ```
 
 Debug 的时候使用
-mvn clean install -Dmaven.test.skip=true -Xlint:unchecked
+mvn clean install -Dmaven.test.skip=true
 
 # 笔记
 flinksql -> 

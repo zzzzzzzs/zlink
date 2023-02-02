@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 2022-11-26
  */
 @RestController
-@RequestMapping("/menus")
+@RequestMapping("/api/menus")
 @RequiredArgsConstructor
 @CrossOrigin
 public class MenusController {
